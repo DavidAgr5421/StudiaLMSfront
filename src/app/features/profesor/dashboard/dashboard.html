@@ -1,0 +1,66 @@
+<div class="mx-auto max-w-5xl px-4 py-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900">Mis cursos</h1>
+      <p class="mt-1 text-sm text-gray-500">Cursos que creaste en Studia.</p>
+    </div>
+    <a
+      routerLink="/profesor/cursos/nuevo"
+      class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+    >
+      + Nuevo curso
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <p class="mt-8 text-sm text-gray-500">Cargando…</p>
+  } @else if (errorMessage()) {
+    <p class="mt-8 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
+  } @else if (courses().length === 0) {
+    <div class="mt-8 rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center">
+      <p class="text-sm text-gray-500">Todavía no creaste ningún curso.</p>
+    </div>
+  } @else {
+    <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      @for (course of courses(); track course.id) {
+        <li class="relative">
+          <a
+            [routerLink]="['/profesor/cursos', course.id]"
+            class="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+          >
+            <div class="flex items-start justify-between gap-2">
+              <h2 class="font-semibold text-gray-900 pr-6">{{ course.name }}</h2>
+              <span
+                class="shrink-0 rounded-full px-2 py-0.5 text-xs font-medium"
+                [class]="course.status === 'Activo' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500'"
+              >
+                {{ course.status }}
+              </span>
+            </div>
+            <p class="mt-2 text-xs text-gray-500">Inscripción: {{ course.enrollmentMode }}</p>
+            <p class="mt-1 text-xs text-gray-400">Código: {{ course.invitationCode }}</p>
+          </a>
+          <button
+            type="button"
+            (click)="requestDelete(course, $event)"
+            title="Eliminar curso"
+            class="absolute right-3 top-3 rounded-md p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600"
+          >
+            🗑
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (courseToDelete(); as course) {
+    <app-confirm-dialog
+      title="Eliminar curso"
+      [message]="'¿Seguro que querés eliminar \'' + course.name + '\'? Se van a borrar también sus secciones, actividades, entregas, inscripciones y fichas. Esta acción no se puede deshacer.'"
+      [isProcessing]="isDeleting()"
+      [errorMessage]="deleteErrorMessage()"
+      (confirmed)="confirmDelete()"
+      (cancelled)="cancelDelete()"
+    />
+  }
+</div>

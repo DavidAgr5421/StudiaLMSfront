@@ -1,0 +1,8 @@
+:host {
+  display: block;
+}
+
+[contenteditable]:empty::before {
+  content: "Escribí acá…";
+  color: var(--color-gray-400);
+}

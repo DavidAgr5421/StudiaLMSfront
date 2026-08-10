@@ -1,0 +1,51 @@
+<div class="mx-auto max-w-xl px-4 py-8">
+  <a routerLink="/profesor" class="text-sm text-brand-600 hover:text-brand-700">&larr; Volver a mis cursos</a>
+
+  <div class="mt-4 rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+    <h1 class="text-xl font-semibold text-gray-900">Nuevo curso</h1>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="mt-6 space-y-4">
+      <div>
+        <label for="name" class="block text-sm font-medium text-gray-700">Nombre del curso</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+        />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <p class="mt-1 text-xs text-red-600">El nombre es obligatorio (máximo 150 caracteres).</p>
+        }
+      </div>
+
+      <div>
+        <label for="enrollmentMode" class="block text-sm font-medium text-gray-700">Modo de inscripción</label>
+        <select
+          id="enrollmentMode"
+          formControlName="enrollmentMode"
+          class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+        >
+          @for (mode of enrollmentModes; track mode) {
+            <option [value]="mode">{{ mode }}</option>
+          }
+        </select>
+        <p class="mt-1 text-xs text-gray-400">
+          Abierta: el estudiante se inscribe solo. Con aprobación: vos decidís cada solicitud.
+          En ambos casos se genera un código de invitación que salta esa regla.
+        </p>
+      </div>
+
+      @if (errorMessage()) {
+        <p class="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
+      }
+
+      <button
+        type="submit"
+        [disabled]="isSubmitting()"
+        class="w-full rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60"
+      >
+        {{ isSubmitting() ? 'Creando…' : 'Crear curso' }}
+      </button>
+    </form>
+  </div>
+</div>
