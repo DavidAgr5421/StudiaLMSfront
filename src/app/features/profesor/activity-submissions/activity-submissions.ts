@@ -5,10 +5,11 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ActivityService } from '../../../core/services/activity.service';
 import { SubmissionService } from '../../../core/services/submission.service';
 import { SubmissionResult } from '../../../core/models/submission.model';
+import { StudentInfoModal } from '../../../shared/ui/student-info-modal/student-info-modal';
 
 @Component({
   selector: 'app-activity-submissions',
-  imports: [RouterLink, DatePipe, FormsModule],
+  imports: [RouterLink, DatePipe, FormsModule, StudentInfoModal],
   templateUrl: './activity-submissions.html',
   styleUrl: './activity-submissions.css',
 })
@@ -25,6 +26,8 @@ export class ActivitySubmissions {
   protected readonly scoreDraft = signal<Record<string, number>>({});
   protected readonly feedbackDraft = signal<Record<string, string>>({});
   protected readonly gradingId = signal<string | null>(null);
+
+  protected readonly selectedStudentId = signal<string | null>(null);
 
   constructor() {
     this.load();
@@ -50,6 +53,14 @@ export class ActivitySubmissions {
 
   setFeedback(submissionId: string, feedback: string): void {
     this.feedbackDraft.update((current) => ({ ...current, [submissionId]: feedback }));
+  }
+
+  viewStudent(studentId: string): void {
+    this.selectedStudentId.set(studentId);
+  }
+
+  closeStudentInfo(): void {
+    this.selectedStudentId.set(null);
   }
 
   grade(submission: SubmissionResult): void {

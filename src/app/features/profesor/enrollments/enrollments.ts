@@ -63,4 +63,8 @@ export class Enrollments {
     this.enrollments.update((current) => current.map((e) => (e.id === updated.id ? updated : e)));
     this.processingId.set(null);
   }
+
+  displayName(enrollment: EnrollmentResult): string {
+    return enrollment.studentName || enrollment.studentEmail || `Estudiante ${enrollment.studentId}`;
+  }
 }

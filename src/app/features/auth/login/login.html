@@ -3,6 +3,10 @@
     <h1 class="text-2xl font-semibold text-gray-900">Iniciar sesión</h1>
     <p class="mt-1 text-sm text-gray-500">Accedé a tu cuenta de Studia.</p>
 
+    @if (infoMessage()) {
+      <p class="mt-4 rounded-md bg-brand-50 px-3 py-2 text-sm text-brand-700">{{ infoMessage() }}</p>
+    }
+
     <form [formGroup]="form" (ngSubmit)="submit()" class="mt-6 space-y-4">
       <div>
         <label for="email" class="block text-sm font-medium text-gray-700">Email</label>

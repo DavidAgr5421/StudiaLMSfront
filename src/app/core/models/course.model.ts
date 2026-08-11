@@ -10,4 +10,5 @@ export interface CourseResult {
   // siempre pasa por alto el modo de inscripción (auto-servicio o aprobación).
   invitationCode: string;
   profesorId: string;
+  profesorName: string | null;
 }

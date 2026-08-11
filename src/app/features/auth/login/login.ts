@@ -15,6 +15,7 @@ export class Login {
   private readonly router = inject(Router);
 
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly infoMessage = signal<string | null>((history.state as { message?: string })?.message ?? null);
   protected readonly isSubmitting = signal(false);
 
   protected readonly form = this.fb.nonNullable.group({
@@ -36,7 +37,7 @@ export class Login {
       await this.auth.login(email, password);
 
       const role = this.auth.role();
-      const destination = role === 'Profesor' || role === 'Administrador' ? '/profesor' : '/';
+      const destination = role === 'Profesor' || role === 'Administrador' ? '/profesor' : '/estudiante';
       this.router.navigateByUrl(destination);
     } catch {
       this.errorMessage.set('Credenciales inválidas. Verificá tu email y contraseña.');

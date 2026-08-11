@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, catchError, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ActivityResult, ActivityType } from '../models/activity.model';
 import { SubmissionResult } from '../models/submission.model';
@@ -37,5 +37,19 @@ export class ActivityService {
 
   getSubmissions(activityId: string): Observable<SubmissionResult[]> {
     return this.http.get<SubmissionResult[]>(`${this.baseUrl}/${activityId}/submissions`);
+  }
+
+  downloadFile(activityId: string, storageKey: string): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${activityId}/files/${storageKey}`, { responseType: 'blob' });
+  }
+
+  // Devuelve null cuando el estudiante todavía no entregó (el backend responde 404 en ese caso).
+  getMySubmission(activityId: string): Observable<SubmissionResult | null> {
+    return this.http.get<SubmissionResult>(`${this.baseUrl}/${activityId}/my-submission`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 404) return of(null);
+        throw error;
+      }),
+    );
   }
 }

@@ -16,4 +16,5 @@ export interface SubmissionResult {
   files: SubmittedFileResult[];
   score: number | null;
   feedback: string | null;
+  studentName: string | null;
 }

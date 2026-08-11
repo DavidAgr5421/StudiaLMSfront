@@ -311,10 +311,13 @@
             <ul class="mt-4 divide-y divide-gray-100">
               @for (activity of activitiesBySection()[section.id] ?? []; track activity.id) {
                 <li class="flex flex-wrap items-center justify-between gap-2 py-3">
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">
+                  <button type="button" (click)="openActivityDetail(activity)" class="flex-1 text-left">
+                    <p class="text-sm font-medium text-gray-900 hover:text-brand-700">
                       {{ activity.title }}
                       <span class="ml-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-normal text-gray-500">{{ scopeLabel(activity.cohortIds) }}</span>
+                      @if (activity.files.length > 0) {
+                        <span class="ml-1 text-xs font-normal text-gray-400">📎 {{ activity.files.length }}</span>
+                      }
                     </p>
                     <p class="text-xs text-gray-500">
                       {{ activity.type }} · Vence {{ activity.dueDateUtc | date: 'medium' }}
@@ -322,18 +325,7 @@
                         · máx. {{ activity.maxFiles }} archivo(s) de entrega
                       }
                     </p>
-                    @if (activity.description) {
-                      <div class="prose prose-sm mt-1 max-w-none text-gray-600" [innerHTML]="activity.description"></div>
-                    }
-                    @if (activity.files.length > 0) {
-                      <p class="mt-1 text-xs text-gray-500">
-                        Material:
-                        @for (file of activity.files; track file.storageKey) {
-                          <span class="mr-1">📎 {{ file.fileName }}</span>
-                        }
-                      </p>
-                    }
-                  </div>
+                  </button>
                   <div class="flex gap-2 text-xs">
                     <a
                       [routerLink]="['/profesor/actividades', activity.id, 'entregas']"
@@ -386,6 +378,14 @@
       [errorMessage]="deleteSectionErrorMessage()"
       (confirmed)="confirmDeleteSection()"
       (cancelled)="cancelDeleteSection()"
+    />
+  }
+
+  @if (selectedActivity(); as activity) {
+    <app-activity-detail
+      [activity]="activity"
+      [scopeLabel]="scopeLabel(activity.cohortIds)"
+      (closed)="closeActivityDetail()"
     />
   }
 </div>

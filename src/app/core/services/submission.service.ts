@@ -12,4 +12,16 @@ export class SubmissionService {
   grade(submissionId: string, score: number, feedback: string | null): Observable<SubmissionResult> {
     return this.http.post<SubmissionResult>(`${this.baseUrl}/${submissionId}/grade`, { score, feedback });
   }
+
+  submitText(activityId: string, textContent: string): Observable<SubmissionResult> {
+    return this.http.post<SubmissionResult>(`${this.baseUrl}/text`, { activityId, textContent });
+  }
+
+  submitFiles(activityId: string, files: File[], description?: string): Observable<SubmissionResult> {
+    const formData = new FormData();
+    for (const file of files) formData.append('files', file, file.name);
+    if (description) formData.append('description', description);
+
+    return this.http.post<SubmissionResult>(`${this.baseUrl}/files/${activityId}`, formData);
+  }
 }

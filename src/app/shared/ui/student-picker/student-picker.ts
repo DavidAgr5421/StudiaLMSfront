@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserService } from '../../../core/services/user.service';
@@ -20,6 +20,11 @@ export class StudentPicker {
   excludeIds = input<ReadonlySet<string>>(new Set());
   placeholder = input('Buscar por nombre o email…');
 
+  // Si se provee, la búsqueda filtra esta lista en memoria en vez de pegarle a
+  // GET /api/users/search -- para acotar el buscador a un grupo ya conocido
+  // (p.ej. "solo estudiantes ya inscritos en este curso").
+  candidates = input<UserResult[] | null>(null);
+
   picked = output<UserResult>();
 
   protected readonly query = signal('');
@@ -35,10 +40,10 @@ export class StudentPicker {
         distinctUntilChanged(),
         switchMap((query) => {
           const trimmed = query.trim();
-          if (!trimmed) return [];
+          if (!trimmed) return of([]);
 
           this.isSearching.set(true);
-          return this.userService.search(trimmed);
+          return this.search(trimmed);
         }),
         takeUntilDestroyed(this.destroyRef),
       )
@@ -47,6 +52,18 @@ export class StudentPicker {
         this.results.set(users.filter((u) => u.role === 'Estudiante' && !excluded.has(u.id)));
         this.isSearching.set(false);
       });
+  }
+
+  private search(query: string): Observable<UserResult[]> {
+    const candidates = this.candidates();
+    if (!candidates) return this.userService.search(query);
+
+    const needle = query.toLowerCase();
+    return of(
+      candidates.filter(
+        (u) => (u.name?.toLowerCase().includes(needle) ?? false) || u.email.toLowerCase().includes(needle),
+      ),
+    );
   }
 
   onQueryChange(value: string): void {

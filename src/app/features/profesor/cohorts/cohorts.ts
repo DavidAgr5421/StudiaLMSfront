@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CohortService } from '../../../core/services/cohort.service';
+import { CourseService } from '../../../core/services/course.service';
 import { CohortResult } from '../../../core/models/cohort.model';
 import { UserResult } from '../../../core/models/user.model';
 import { StudentPicker } from '../../../shared/ui/student-picker/student-picker';
@@ -15,6 +16,7 @@ import { StudentPicker } from '../../../shared/ui/student-picker/student-picker'
 export class Cohorts {
   private readonly route = inject(ActivatedRoute);
   private readonly cohortService = inject(CohortService);
+  private readonly courseService = inject(CourseService);
   private readonly fb = inject(FormBuilder);
 
   protected readonly courseId = this.route.snapshot.paramMap.get('courseId')!;
@@ -22,6 +24,10 @@ export class Cohorts {
   protected readonly cohorts = signal<CohortResult[]>([]);
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
+
+  // Solo se puede asignar a una ficha a alguien ya inscrito en el curso -- el buscador
+  // de cada ficha filtra este roster en vez de buscar entre todos los usuarios.
+  protected readonly courseStudents = signal<UserResult[]>([]);
 
   protected readonly pendingStudentsByCohort = signal<Record<string, UserResult[]>>({});
   protected readonly assignErrors = signal<Record<string, string>>({});
@@ -33,6 +39,7 @@ export class Cohorts {
 
   constructor() {
     this.loadCohorts();
+    this.loadCourseStudents();
   }
 
   private loadCohorts(): void {
@@ -46,6 +53,23 @@ export class Cohorts {
         this.errorMessage.set('No se pudieron cargar las fichas.');
         this.isLoading.set(false);
       },
+    });
+  }
+
+  private loadCourseStudents(): void {
+    this.courseService.getEnrollments(this.courseId).subscribe((enrollments) => {
+      this.courseStudents.set(
+        enrollments
+          .filter((enrollment) => enrollment.status === 'Aprobada')
+          .map((enrollment) => ({
+            id: enrollment.studentId,
+            name: enrollment.studentName,
+            email: enrollment.studentEmail ?? '',
+            role: 'Estudiante' as const,
+            typeId: null,
+            valueId: null,
+          })),
+      );
     });
   }
 

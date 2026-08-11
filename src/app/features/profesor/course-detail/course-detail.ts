@@ -16,12 +16,13 @@ import { UserResult } from '../../../core/models/user.model';
 import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog';
 import { RichTextEditor } from '../../../shared/ui/rich-text-editor/rich-text-editor';
 import { StudentPicker } from '../../../shared/ui/student-picker/student-picker';
+import { ActivityDetail } from '../../../shared/ui/activity-detail/activity-detail';
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
 @Component({
   selector: 'app-course-detail',
-  imports: [ReactiveFormsModule, RouterLink, DatePipe, ConfirmDialog, RichTextEditor, StudentPicker],
+  imports: [ReactiveFormsModule, RouterLink, DatePipe, ConfirmDialog, RichTextEditor, StudentPicker, ActivityDetail],
   templateUrl: './course-detail.html',
   styleUrl: './course-detail.css',
 })
@@ -81,6 +82,8 @@ export class CourseDetail {
   });
 
   protected readonly pendingStudents = signal<UserResult[]>([]);
+
+  protected readonly selectedActivity = signal<ActivityResult | null>(null);
 
   constructor() {
     this.loadCourse();
@@ -317,6 +320,14 @@ export class CourseDetail {
   cancelDeleteSection(): void {
     this.sectionToDelete.set(null);
     this.deleteSectionErrorMessage.set(null);
+  }
+
+  openActivityDetail(activity: ActivityResult): void {
+    this.selectedActivity.set(activity);
+  }
+
+  closeActivityDetail(): void {
+    this.selectedActivity.set(null);
   }
 
   scopeLabel(cohortIds: string[]): string {

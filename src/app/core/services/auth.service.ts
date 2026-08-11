@@ -42,6 +42,9 @@ export class AuthService {
   async logout(): Promise<void> {
     try {
       await firstValueFrom(this.http.post(`${environment.apiUrl}/auth/logout`, {}));
+    } catch {
+      // Best-effort: si el token ya venció o el server no responde, igual cerramos
+      // la sesión localmente -- no tiene sentido bloquear al usuario acá.
     } finally {
       this.clearSession();
     }

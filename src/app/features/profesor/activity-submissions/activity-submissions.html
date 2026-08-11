@@ -15,7 +15,13 @@
         <li class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <p class="text-sm font-medium text-gray-900">Estudiante {{ submission.studentId }}</p>
+              <button
+                type="button"
+                (click)="viewStudent(submission.studentId)"
+                class="text-sm font-medium text-gray-900 hover:text-brand-700 hover:underline"
+              >
+                Estudiante {{ submission.studentName || submission.studentId }}
+              </button>
               <p class="text-xs text-gray-500">
                 Entregado {{ submission.submittedAtUtc | date: 'medium' }}
                 · <span [class.text-red-600]="submission.status === 'Tardia'">{{ submission.status }}</span>
@@ -29,9 +35,13 @@
           </div>
 
           @if (submission.textContent) {
-            <p class="mt-3 whitespace-pre-wrap rounded-md bg-gray-50 p-3 text-sm text-gray-700">
-              {{ submission.textContent }}
-            </p>
+            @if (submission.files.length > 0) {
+              <div class="prose prose-sm mt-3 max-w-none rounded-md bg-gray-50 p-3 text-gray-700" [innerHTML]="submission.textContent"></div>
+            } @else {
+              <p class="mt-3 whitespace-pre-wrap rounded-md bg-gray-50 p-3 text-sm text-gray-700">
+                {{ submission.textContent }}
+              </p>
+            }
           }
 
           @if (submission.files.length > 0) {
@@ -75,5 +85,9 @@
         </li>
       }
     </ul>
+  }
+
+  @if (selectedStudentId(); as studentId) {
+    <app-student-info-modal [userId]="studentId" (closed)="closeStudentInfo()" />
   }
 </div>

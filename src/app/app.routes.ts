@@ -1,14 +1,17 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
   {
     path: 'login',
+    canActivate: [guestGuard],
     loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
   },
   {
     path: 'register',
+    canActivate: [guestGuard],
     loadComponent: () => import('./features/auth/register/register').then((m) => m.Register),
   },
   {
@@ -47,6 +50,27 @@ export const routes: Routes = [
           ),
       },
     ],
+  },
+  {
+    path: 'estudiante',
+    canActivate: [authGuard, roleGuard(['Estudiante'])],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/estudiante/cursos/cursos').then((m) => m.EstudianteCursos),
+      },
+      {
+        path: 'cursos/:courseId',
+        loadComponent: () =>
+          import('./features/estudiante/course-detail/course-detail').then((m) => m.EstudianteCourseDetail),
+      },
+    ],
+  },
+  {
+    path: 'perfil',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/perfil/perfil').then((m) => m.Perfil),
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },

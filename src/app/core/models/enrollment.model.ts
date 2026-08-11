@@ -7,6 +7,8 @@ export interface EnrollmentResult {
   status: EnrollmentStatus;
   requestedAtUtc: string;
   decidedAtUtc: string | null;
+  studentName: string | null;
+  studentEmail: string | null;
 }
 
 export interface AddStudentToCourseOutcome {

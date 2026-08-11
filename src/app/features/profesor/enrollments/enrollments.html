@@ -21,7 +21,7 @@
         @for (enrollment of pending(); track enrollment.id) {
           <li class="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm">
             <div>
-              <p class="text-sm font-medium text-gray-900">Estudiante {{ enrollment.studentId }}</p>
+              <p class="text-sm font-medium text-gray-900">{{ displayName(enrollment) }}</p>
               <p class="text-xs text-gray-500">Solicitado {{ enrollment.requestedAtUtc | date: 'medium' }}</p>
             </div>
             <div class="flex gap-2">
@@ -57,7 +57,7 @@
       <ul class="mt-3 space-y-2">
         @for (enrollment of decided(); track enrollment.id) {
           <li class="flex items-center justify-between rounded-lg border border-gray-100 bg-white px-4 py-3">
-            <p class="text-sm text-gray-700">Estudiante {{ enrollment.studentId }}</p>
+            <p class="text-sm text-gray-700">{{ displayName(enrollment) }}</p>
             <span
               class="rounded-full px-2 py-0.5 text-xs font-medium"
               [class]="enrollment.status === 'Aprobada' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500'"

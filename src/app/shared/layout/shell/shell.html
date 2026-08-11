@@ -21,7 +21,13 @@
     </div>
   </header>
 
-  <main class="flex-1 bg-gray-50">
-    <router-outlet />
-  </main>
+  <div class="flex min-h-0 flex-1">
+    @if (auth.isLoggedIn()) {
+      <app-sidebar class="hidden md:block" />
+    }
+
+    <main class="min-w-0 flex-1 overflow-y-auto bg-gray-50">
+      <router-outlet />
+    </main>
+  </div>
 </div>

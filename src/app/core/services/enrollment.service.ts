@@ -16,4 +16,8 @@ export class EnrollmentService {
   reject(enrollmentId: string): Observable<EnrollmentResult> {
     return this.http.post<EnrollmentResult>(`${this.baseUrl}/${enrollmentId}/reject`, {});
   }
+
+  getMine(): Observable<EnrollmentResult[]> {
+    return this.http.get<EnrollmentResult[]>(`${this.baseUrl}/mine`);
+  }
 }
