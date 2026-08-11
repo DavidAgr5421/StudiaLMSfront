@@ -20,4 +20,12 @@ export class EnrollmentService {
   getMine(): Observable<EnrollmentResult[]> {
     return this.http.get<EnrollmentResult[]>(`${this.baseUrl}/mine`);
   }
+
+  enrollOpen(courseId: string): Observable<EnrollmentResult> {
+    return this.http.post<EnrollmentResult>(`${this.baseUrl}/open`, { courseId });
+  }
+
+  requestEnrollment(courseId: string): Observable<EnrollmentResult> {
+    return this.http.post<EnrollmentResult>(`${this.baseUrl}/requests`, { courseId });
+  }
 }

@@ -1,0 +1,59 @@
+<div class="relative w-full">
+  <div class="relative">
+    <svg
+      class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+    </svg>
+    <input
+      type="text"
+      [ngModel]="query()"
+      (ngModelChange)="onQueryChange($event)"
+      (focus)="onFocus()"
+      placeholder="Buscar curso o profesor…"
+      autocomplete="off"
+      class="w-full rounded-lg border-0 bg-white/95 py-1.5 pl-9 pr-3 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-white/10 transition-all placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-white/80"
+    />
+  </div>
+
+  @if (isOpen() && query().trim()) {
+    <div class="animate-fade-in-down absolute left-0 top-full z-20 mt-2 w-80 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl">
+      @if (isSearching()) {
+        <p class="px-4 py-3 text-sm text-gray-400">Buscando…</p>
+      } @else if (results().length === 0) {
+        <p class="px-4 py-3 text-sm text-gray-400">Sin cursos abiertos para "{{ query() }}".</p>
+      } @else {
+        <ul class="max-h-80 divide-y divide-gray-50 overflow-auto py-1">
+          @for (course of results(); track course.id) {
+            <li class="flex items-center justify-between gap-2 px-3 py-2 hover:bg-gray-50">
+              <button type="button" (click)="viewCourse(course)" class="min-w-0 flex-1 text-left">
+                <p class="truncate text-sm font-medium text-gray-900">{{ course.name }}</p>
+                <span class="mt-0.5 inline-block rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700">
+                  Abierta
+                </span>
+              </button>
+
+              @if (isEstudiante()) {
+                <button
+                  type="button"
+                  [disabled]="joiningCourseId() === course.id"
+                  (click)="join(course, $event)"
+                  class="shrink-0 rounded-md bg-brand-600 px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-brand-700 disabled:opacity-60"
+                >
+                  {{ joiningCourseId() === course.id ? 'Uniendo…' : 'Unirme' }}
+                </button>
+              }
+            </li>
+            @if (joinErrorId() === course.id) {
+              <p class="px-3 pb-2 text-xs text-red-600">No se pudo unir al curso.</p>
+            }
+          }
+        </ul>
+      }
+    </div>
+  }
+</div>

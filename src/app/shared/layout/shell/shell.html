@@ -1,33 +1,104 @@
-<div class="min-h-screen flex flex-col">
-  <header class="bg-brand-600 text-white shadow-sm">
-    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-      <a routerLink="/" class="text-lg font-semibold tracking-tight">Studia</a>
-
-      @if (auth.isLoggedIn()) {
-        <nav class="flex items-center gap-4 text-sm">
-          <span class="hidden sm:inline text-brand-100">{{ auth.currentUser()?.email }}</span>
-          <span class="rounded-full bg-brand-700 px-2.5 py-1 text-xs font-medium">
-            {{ auth.role() }}
-          </span>
+<div class="flex min-h-screen flex-col">
+  <header class="sticky top-0 z-30 bg-gradient-to-r from-brand-700 via-brand-600 to-brand-500 text-white shadow-md">
+    <div class="flex items-center justify-between gap-4 px-4 py-2.5">
+      <!-- Izquierda: toggle, logo, Cursos -->
+      <div class="flex min-w-0 items-center gap-2">
+        @if (auth.isLoggedIn()) {
           <button
             type="button"
-            (click)="logout()"
-            class="rounded-md bg-white/10 px-3 py-1.5 font-medium hover:bg-white/20 transition-colors"
+            (click)="toggleSidebar()"
+            title="Mostrar/ocultar barra lateral"
+            class="hidden shrink-0 rounded-md p-2 text-white/90 transition-colors hover:bg-white/10 hover:text-white md:inline-flex"
           >
-            Cerrar sesión
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
           </button>
-        </nav>
+        }
+
+        <a [routerLink]="auth.isLoggedIn() ? homeLink() : '/cursos'" class="flex shrink-0 items-center gap-2 pl-1 pr-2">
+          <span class="h-7 w-7 rounded-full bg-white shadow-sm"></span>
+          <span class="text-lg font-semibold tracking-wide">STUDIA</span>
+        </a>
+
+        <a
+          routerLink="/cursos"
+          class="hidden shrink-0 rounded-md px-3 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white sm:inline-block"
+        >
+          Cursos
+        </a>
+      </div>
+
+      <!-- Centro: buscador de cursos abiertos -->
+      <div class="hidden flex-1 justify-center md:flex">
+        <app-course-search class="w-full max-w-sm" />
+      </div>
+
+      <!-- Derecha: usuario, rol, cerrar sesión -- o invitación a loguearse -->
+      @if (auth.isLoggedIn()) {
+        <div class="flex shrink-0 items-center gap-3">
+          <div class="hidden text-right leading-tight sm:block">
+            <p class="max-w-[12rem] truncate text-sm font-medium text-white">{{ displayName() }}</p>
+            <p class="text-xs text-brand-100">{{ auth.role() }}</p>
+          </div>
+
+          <button
+            type="button"
+            (click)="requestLogout()"
+            class="flex shrink-0 items-center gap-1.5 rounded-md bg-white px-3 py-1.5 text-sm font-medium text-brand-700 shadow-sm transition-colors hover:bg-brand-50"
+          >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              />
+            </svg>
+            <span class="hidden sm:inline">Cerrar sesión</span>
+          </button>
+        </div>
+      } @else {
+        <div class="flex shrink-0 items-center gap-2">
+          <a
+            routerLink="/register"
+            class="hidden rounded-md px-3 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white sm:inline-block"
+          >
+            Registrate
+          </a>
+          <a
+            routerLink="/login"
+            class="rounded-md bg-white px-3 py-1.5 text-sm font-medium text-brand-700 shadow-sm transition-colors hover:bg-brand-50"
+          >
+            Iniciar sesión
+          </a>
+        </div>
       }
     </div>
   </header>
 
   <div class="flex min-h-0 flex-1">
     @if (auth.isLoggedIn()) {
-      <app-sidebar class="hidden md:block" />
+      <div
+        class="hidden overflow-hidden transition-[width] duration-300 ease-in-out md:block"
+        [style.width.px]="isSidebarOpen() ? 256 : 0"
+      >
+        <app-sidebar />
+      </div>
     }
 
-    <main class="min-w-0 flex-1 overflow-y-auto bg-gray-50">
+    <main class="min-w-0 flex-1 overflow-y-auto">
       <router-outlet />
     </main>
   </div>
 </div>
+
+@if (showLogoutConfirm()) {
+  <app-confirm-dialog
+    title="Cerrar sesión"
+    message="¿Seguro que querés cerrar tu sesión?"
+    confirmLabel="Cerrar sesión"
+    [isProcessing]="isLoggingOut()"
+    (confirmed)="confirmLogout()"
+    (cancelled)="cancelLogout()"
+  />
+}

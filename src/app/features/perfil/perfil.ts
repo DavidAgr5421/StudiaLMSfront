@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../core/services/user.service';
 import { AuthService } from '../../core/services/auth.service';
+import { CurrentUserService } from '../../core/services/current-user.service';
 import { IdentificationType, UserResult } from '../../core/models/user.model';
 
 const IDENTIFICATION_TYPES: { value: IdentificationType; label: string }[] = [
@@ -21,6 +22,7 @@ export class Perfil {
   private readonly fb = inject(FormBuilder);
   private readonly userService = inject(UserService);
   private readonly authService = inject(AuthService);
+  private readonly currentUserService = inject(CurrentUserService);
   private readonly router = inject(Router);
 
   protected readonly user = signal<UserResult | null>(null);
@@ -84,6 +86,7 @@ export class Perfil {
     this.userService.updateName(name.trim() || null).subscribe({
       next: (user) => {
         this.user.set(user);
+        this.currentUserService.set(user);
         this.isSavingName.set(false);
         this.nameSuccessMessage.set('Nombre actualizado.');
       },

@@ -5,6 +5,19 @@ import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
   {
+    path: 'cursos',
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/cursos/lista/lista').then((m) => m.CursosPublicos),
+      },
+      {
+        path: ':courseId',
+        loadComponent: () => import('./features/cursos/detalle/detalle').then((m) => m.CursoPublico),
+      },
+    ],
+  },
+  {
     path: 'login',
     canActivate: [guestGuard],
     loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
