@@ -1,0 +1,83 @@
+<div class="mx-auto max-w-3xl px-4 py-8">
+  <a [routerLink]="['/profesor/cursos', courseId]" class="text-sm text-brand-600 hover:text-brand-700">
+    &larr; Volver al curso
+  </a>
+
+  <h1 class="mt-4 text-2xl font-semibold text-gray-900">Fichas</h1>
+  <p class="mt-1 text-sm text-gray-500">Fichas de este curso.</p>
+
+  <form
+    [formGroup]="cohortForm"
+    (ngSubmit)="createCohort()"
+    class="mt-6 flex gap-2 rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+  >
+    <input
+      type="text"
+      formControlName="name"
+      placeholder="Nombre de la ficha (ej. ADSO-2601)"
+      class="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+    />
+    <button type="submit" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+      Crear ficha
+    </button>
+  </form>
+
+  @if (errorMessage()) {
+    <p class="mt-2 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
+  }
+
+  @if (isLoading()) {
+    <p class="mt-6 text-sm text-gray-500">Cargando…</p>
+  } @else if (cohorts().length === 0) {
+    <p class="mt-6 text-sm text-gray-400">Todavía no creaste ninguna ficha en este curso.</p>
+  }
+
+  <ul class="mt-6 space-y-4">
+    @for (cohort of cohorts(); track cohort.id) {
+      <li class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <h2 class="font-semibold text-gray-900">{{ cohort.name }}</h2>
+        <p class="mt-1 text-xs text-gray-500">
+          {{ cohort.studentIds.length }} estudiante(s) asignado(s)
+        </p>
+
+        <div class="mt-3">
+          <app-student-picker
+            [candidates]="courseStudents()"
+            [excludeIds]="pendingIdsFor(cohort.id)"
+            placeholder="Buscar entre los estudiantes del curso…"
+            (picked)="onStudentPicked(cohort.id, $event)"
+          />
+        </div>
+
+        @if (pendingStudentsFor(cohort.id).length > 0) {
+          <ul class="mt-3 flex flex-wrap gap-2">
+            @for (student of pendingStudentsFor(cohort.id); track student.id) {
+              <li class="flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs text-brand-700">
+                {{ student.name || student.email }}
+                <button
+                  type="button"
+                  (click)="removePendingStudent(cohort.id, student.id)"
+                  class="text-brand-500 hover:text-brand-800"
+                >
+                  ×
+                </button>
+              </li>
+            }
+          </ul>
+          <button
+            type="button"
+            [disabled]="assigningCohortId() === cohort.id"
+            (click)="submitPendingStudents(cohort.id)"
+            class="mt-3 rounded-md bg-brand-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60"
+          >
+            {{ assigningCohortId() === cohort.id ? 'Asignando…' : 'Asignar ' + pendingStudentsFor(cohort.id).length + ' estudiante(s)' }}
+          </button>
+        }
+
+        @if (assignErrors()[cohort.id]) {
+          <p class="mt-2 text-xs text-red-600">{{ assignErrors()[cohort.id] }}</p>
+        }
+      </li>
+    }
+  </ul>
+</div>

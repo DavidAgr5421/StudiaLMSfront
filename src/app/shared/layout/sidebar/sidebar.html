@@ -1,0 +1,220 @@
+<aside class="flex h-full w-64 shrink-0 flex-col border-r border-gray-200 bg-white">
+  <div class="flex-1 overflow-y-auto px-2 py-3">
+    @if (isLoading()) {
+      <p class="px-2 py-2 text-xs text-gray-400">Cargando…</p>
+    } @else if (isEstudiante()) {
+      <p class="px-2 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-gray-400">Mis cursos</p>
+      @if (approvedCourses().length === 0) {
+        <p class="px-2 py-1 text-xs text-gray-400">Sin cursos todavía.</p>
+      }
+      <ul class="space-y-0.5">
+        @for (item of approvedCourses(); track item.course.id) {
+          <li>
+            <button
+              type="button"
+              (click)="toggleSectionsBranch('c:' + item.course.id, item.course.id)"
+              class="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            >
+              <span class="truncate">{{ item.course.name }}</span>
+              <span
+                class="ml-1 shrink-0 text-gray-400 transition-transform duration-200"
+                [class.rotate-90]="isExpanded('c:' + item.course.id)"
+              >
+                ›
+              </span>
+            </button>
+            @if (isExpanded('c:' + item.course.id)) {
+              <div class="animate-fade-in-up ml-3 border-l border-gray-100 pl-2">
+                <ng-container
+                  *ngTemplateOutlet="
+                    sectionsTree;
+                    context: { courseId: item.course.id, keyPrefix: 'c:' + item.course.id, mode: 'view' }
+                  "
+                />
+              </div>
+            }
+          </li>
+        }
+      </ul>
+
+      @if (pendingCourses().length > 0) {
+        <p class="px-2 pb-1 pt-4 text-xs font-semibold uppercase tracking-wide text-gray-400">En aprobación</p>
+        <ul class="space-y-0.5">
+          @for (item of pendingCourses(); track item.course.id) {
+            <li class="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm text-gray-400">
+              <span class="truncate">{{ item.course.name }}</span>
+              <span class="shrink-0 rounded-full bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">
+                Pendiente
+              </span>
+            </li>
+          }
+        </ul>
+      }
+    } @else if (isProfesor()) {
+      <p class="px-2 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-gray-400">Mis cursos</p>
+      @if (profesorCourses().length === 0) {
+        <p class="px-2 py-1 text-xs text-gray-400">Todavía no creaste cursos.</p>
+      }
+      <ul class="space-y-0.5">
+        @for (course of profesorCourses(); track course.id) {
+          <li>
+            <button
+              type="button"
+              (click)="toggle('c:' + course.id)"
+              class="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            >
+              <span class="truncate">{{ course.name }}</span>
+              <span
+                class="ml-1 shrink-0 text-gray-400 transition-transform duration-200"
+                [class.rotate-90]="isExpanded('c:' + course.id)"
+              >
+                ›
+              </span>
+            </button>
+
+            @if (isExpanded('c:' + course.id)) {
+              <div class="animate-fade-in-up ml-3 space-y-0.5 border-l border-gray-100 py-1 pl-2">
+                <a
+                  [routerLink]="['/profesor/cursos', course.id, 'inscripciones']"
+                  class="block rounded-md px-2 py-1 text-xs text-gray-600 transition-colors hover:bg-gray-50 hover:text-brand-700"
+                >
+                  Inscripciones
+                </a>
+                <a
+                  [routerLink]="['/profesor/cursos', course.id, 'fichas']"
+                  class="block rounded-md px-2 py-1 text-xs text-gray-600 transition-colors hover:bg-gray-50 hover:text-brand-700"
+                >
+                  Fichas
+                </a>
+
+                <div>
+                  <button
+                    type="button"
+                    (click)="toggleSectionsBranch('c:' + course.id + ':secciones', course.id)"
+                    class="flex w-full items-center justify-between rounded-md px-2 py-1 text-left text-xs text-gray-600 transition-colors hover:bg-gray-50 hover:text-brand-700"
+                  >
+                    <span>Secciones</span>
+                    <span
+                      class="text-gray-400 transition-transform duration-200"
+                      [class.rotate-90]="isExpanded('c:' + course.id + ':secciones')"
+                    >
+                      ›
+                    </span>
+                  </button>
+                  @if (isExpanded('c:' + course.id + ':secciones')) {
+                    <div class="animate-fade-in-up ml-3 border-l border-gray-100 pl-2">
+                      <ng-container
+                        *ngTemplateOutlet="
+                          sectionsTree;
+                          context: { courseId: course.id, keyPrefix: 'c:' + course.id + ':secciones', mode: 'view' }
+                        "
+                      />
+                    </div>
+                  }
+                </div>
+
+                <div>
+                  <button
+                    type="button"
+                    (click)="toggleSectionsBranch('c:' + course.id + ':calificaciones', course.id)"
+                    class="flex w-full items-center justify-between rounded-md px-2 py-1 text-left text-xs text-gray-600 transition-colors hover:bg-gray-50 hover:text-brand-700"
+                  >
+                    <span>Calificaciones</span>
+                    <span
+                      class="text-gray-400 transition-transform duration-200"
+                      [class.rotate-90]="isExpanded('c:' + course.id + ':calificaciones')"
+                    >
+                      ›
+                    </span>
+                  </button>
+                  @if (isExpanded('c:' + course.id + ':calificaciones')) {
+                    <div class="animate-fade-in-up ml-3 border-l border-gray-100 pl-2">
+                      <ng-container
+                        *ngTemplateOutlet="
+                          sectionsTree;
+                          context: {
+                            courseId: course.id,
+                            keyPrefix: 'c:' + course.id + ':calificaciones',
+                            mode: 'grade',
+                          }
+                        "
+                      />
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div class="border-t border-gray-100 p-2">
+    <a
+      routerLink="/perfil"
+      class="block rounded-md px-2 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-brand-700"
+    >
+      Mi perfil
+    </a>
+  </div>
+</aside>
+
+<ng-template #sectionsTree let-courseId="courseId" let-keyPrefix="keyPrefix" let-mode="mode">
+  @if (sectionsByCourse()[courseId]; as sections) {
+    @if (sections.length === 0) {
+      <p class="px-2 py-1 text-xs text-gray-400">Sin secciones.</p>
+    } @else {
+      <ul class="space-y-0.5">
+        @for (section of sections; track section.id) {
+          <li>
+            <button
+              type="button"
+              (click)="toggleSectionNode(keyPrefix + ':s:' + section.id, section.id)"
+              class="flex w-full items-center justify-between rounded-md px-2 py-1 text-left text-xs text-gray-600 transition-colors hover:bg-gray-50 hover:text-brand-700"
+            >
+              <span class="truncate">{{ section.title }}</span>
+              <span
+                class="text-gray-400 transition-transform duration-200"
+                [class.rotate-90]="isExpanded(keyPrefix + ':s:' + section.id)"
+              >
+                ›
+              </span>
+            </button>
+            @if (isExpanded(keyPrefix + ':s:' + section.id)) {
+              <div class="animate-fade-in-up ml-3 border-l border-gray-100 pl-2">
+                @if (activitiesBySection()[section.id]; as activities) {
+                  @if (activities.length === 0) {
+                    <p class="px-2 py-1 text-[11px] text-gray-400">Sin actividades.</p>
+                  } @else {
+                    <ul class="space-y-0.5">
+                      @for (activity of activities; track activity.id) {
+                        <li>
+                          <button
+                            type="button"
+                            (click)="onActivityClick(activity, mode)"
+                            class="block w-full truncate rounded-md px-2 py-1 text-left text-[11px] text-gray-500 transition-colors hover:bg-gray-50 hover:text-brand-700"
+                          >
+                            {{ activity.title }}
+                          </button>
+                        </li>
+                      }
+                    </ul>
+                  }
+                } @else {
+                  <p class="px-2 py-1 text-[11px] text-gray-400">Cargando…</p>
+                }
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    }
+  } @else {
+    <p class="px-2 py-1 text-xs text-gray-400">Cargando…</p>
+  }
+</ng-template>
+
+@if (selectedActivity(); as activity) {
+  <app-activity-detail [activity]="activity" (closed)="closeActivity()" />
+}

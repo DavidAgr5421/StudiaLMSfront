@@ -1,0 +1,35 @@
+<div class="relative">
+  <input
+    type="text"
+    [ngModel]="query()"
+    (ngModelChange)="onQueryChange($event)"
+    [placeholder]="placeholder()"
+    autocomplete="off"
+    class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+  />
+
+  @if (isSearching()) {
+    <p class="mt-1 text-xs text-gray-400">Buscando…</p>
+  } @else if (query().trim() && results().length === 0) {
+    <p class="mt-1 text-xs text-gray-400">Sin resultados para "{{ query() }}".</p>
+  }
+
+  @if (results().length > 0) {
+    <ul class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md border border-gray-200 bg-white py-1 shadow-lg">
+      @for (user of results(); track user.id) {
+        <li>
+          <button
+            type="button"
+            (click)="pick(user)"
+            class="flex w-full flex-col items-start px-3 py-2 text-left text-sm hover:bg-brand-50"
+          >
+            <span class="font-medium text-gray-900">{{ user.name || user.email }}</span>
+            @if (user.name) {
+              <span class="text-xs text-gray-500">{{ user.email }}</span>
+            }
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</div>

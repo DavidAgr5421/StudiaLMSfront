@@ -1,0 +1,102 @@
+<div class="overflow-hidden rounded-md border border-gray-300" [class.opacity-60]="isDisabled()">
+  <div class="flex flex-wrap items-center gap-1 border-b border-gray-200 bg-gray-50 px-2 py-1">
+    @if (!isSourceMode()) {
+      <button
+        type="button"
+        [disabled]="isDisabled()"
+        (mousedown)="$event.preventDefault()"
+        (click)="exec('bold')"
+        title="Negrita"
+        class="rounded px-2 py-1 text-xs font-bold text-gray-700 hover:bg-gray-200"
+      >
+        N
+      </button>
+      <button
+        type="button"
+        [disabled]="isDisabled()"
+        (mousedown)="$event.preventDefault()"
+        (click)="exec('italic')"
+        title="Cursiva"
+        class="rounded px-2 py-1 text-xs italic text-gray-700 hover:bg-gray-200"
+      >
+        K
+      </button>
+
+      <span class="mx-1 h-4 w-px bg-gray-300"></span>
+
+      <button
+        type="button"
+        [disabled]="isDisabled()"
+        (mousedown)="$event.preventDefault()"
+        (click)="exec('justifyLeft')"
+        title="Alinear a la izquierda"
+        class="rounded px-2 py-1 text-xs text-gray-700 hover:bg-gray-200"
+      >
+        ⟸
+      </button>
+      <button
+        type="button"
+        [disabled]="isDisabled()"
+        (mousedown)="$event.preventDefault()"
+        (click)="exec('justifyCenter')"
+        title="Centrar"
+        class="rounded px-2 py-1 text-xs text-gray-700 hover:bg-gray-200"
+      >
+        ⟺
+      </button>
+      <button
+        type="button"
+        [disabled]="isDisabled()"
+        (mousedown)="$event.preventDefault()"
+        (click)="exec('justifyRight')"
+        title="Alinear a la derecha"
+        class="rounded px-2 py-1 text-xs text-gray-700 hover:bg-gray-200"
+      >
+        ⟹
+      </button>
+
+      <span class="mx-1 h-4 w-px bg-gray-300"></span>
+
+      @for (format of formatOptions; track format.tag) {
+        <button
+          type="button"
+          [disabled]="isDisabled()"
+          (mousedown)="$event.preventDefault()"
+          (click)="setFormatBlock(format.tag)"
+          class="rounded px-2 py-1 text-xs text-gray-700 hover:bg-gray-200"
+        >
+          {{ format.label }}
+        </button>
+      }
+    }
+
+    <span class="flex-1"></span>
+
+    <button
+      type="button"
+      (click)="toggleSourceMode()"
+      [class]="isSourceMode() ? 'rounded bg-gray-700 px-2 py-1 text-xs font-medium text-white' : 'rounded px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-200'"
+      title="Ver/editar el código HTML"
+    >
+      &lt;/&gt; HTML
+    </button>
+  </div>
+
+  @if (isSourceMode()) {
+    <textarea
+      [value]="sourceHtml()"
+      (input)="onSourceInput($event)"
+      [disabled]="isDisabled()"
+      rows="6"
+      spellcheck="false"
+      class="block w-full resize-y bg-white px-3 py-2 font-mono text-xs text-gray-800 focus:outline-none"
+    ></textarea>
+  } @else {
+    <div
+      #editable
+      class="prose prose-sm min-h-[120px] max-w-none px-3 py-2 text-sm text-gray-900 focus:outline-none"
+      [attr.contenteditable]="!isDisabled()"
+      (input)="onEditableInput()"
+    ></div>
+  }
+</div>
