@@ -10,19 +10,15 @@ import { NotificationService } from '../../../core/services/notification.service
 import { CourseResult } from '../../../core/models/course.model';
 import { SectionResult } from '../../../core/models/section.model';
 import { ActivityResult, ActivityType } from '../../../core/models/activity.model';
-import { AddStudentsToCourseResult } from '../../../core/models/enrollment.model';
 import { CohortResult } from '../../../core/models/cohort.model';
-import { UserResult } from '../../../core/models/user.model';
 import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog';
 import { RichTextEditor } from '../../../shared/ui/rich-text-editor/rich-text-editor';
-import { StudentPicker } from '../../../shared/ui/student-picker/student-picker';
-import { ActivityDetail } from '../../../shared/ui/activity-detail/activity-detail';
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
 @Component({
   selector: 'app-course-detail',
-  imports: [ReactiveFormsModule, RouterLink, DatePipe, ConfirmDialog, RichTextEditor, StudentPicker, ActivityDetail],
+  imports: [ReactiveFormsModule, RouterLink, DatePipe, ConfirmDialog, RichTextEditor],
   templateUrl: './course-detail.html',
   styleUrl: './course-detail.css',
 })
@@ -49,8 +45,6 @@ export class CourseDetail {
 
   protected readonly sectionErrorMessage = signal<string | null>(null);
   protected readonly activityErrorMessage = signal<string | null>(null);
-  protected readonly studentsErrorMessage = signal<string | null>(null);
-  protected readonly studentsResultMessage = signal<string | null>(null);
   protected readonly notifyMessage = signal<string | null>(null);
 
   protected readonly sectionCohortIds = signal<Set<string>>(new Set());
@@ -80,10 +74,6 @@ export class CourseDetail {
     type: ['SoloTexto' as ActivityType, Validators.required],
     maxFiles: [1],
   });
-
-  protected readonly pendingStudents = signal<UserResult[]>([]);
-
-  protected readonly selectedActivity = signal<ActivityResult | null>(null);
 
   constructor() {
     this.loadCourse();
@@ -233,42 +223,6 @@ export class CourseDetail {
     });
   }
 
-  pendingStudentIds(): ReadonlySet<string> {
-    return new Set(this.pendingStudents().map((student) => student.id));
-  }
-
-  onStudentPicked(student: UserResult): void {
-    this.pendingStudents.update((current) => [...current, student]);
-  }
-
-  removePendingStudent(studentId: string): void {
-    this.pendingStudents.update((current) => current.filter((student) => student.id !== studentId));
-  }
-
-  submitStudents(): void {
-    const students = this.pendingStudents();
-    if (students.length === 0) return;
-
-    this.studentsErrorMessage.set(null);
-    this.studentsResultMessage.set(null);
-
-    const identifiers = students.map((student) => student.email);
-
-    this.courseService.addStudents(this.courseId, identifiers).subscribe({
-      next: (result: AddStudentsToCourseResult) => {
-        const outcomes = result.outcomes;
-        const okCount = outcomes.filter((o) => o.success).length;
-        const failed = outcomes.filter((o) => !o.success);
-        this.studentsResultMessage.set(
-          `${okCount} de ${outcomes.length} agregados.` +
-            (failed.length > 0 ? ` Fallaron: ${failed.map((f) => f.identifier).join(', ')}` : ''),
-        );
-        this.pendingStudents.set([]);
-      },
-      error: () => this.studentsErrorMessage.set('No se pudo agregar a los estudiantes.'),
-    });
-  }
-
   requestDeleteCourse(): void {
     this.deleteCourseErrorMessage.set(null);
     this.showDeleteCourseConfirm.set(true);
@@ -323,11 +277,7 @@ export class CourseDetail {
   }
 
   openActivityDetail(activity: ActivityResult): void {
-    this.selectedActivity.set(activity);
-  }
-
-  closeActivityDetail(): void {
-    this.selectedActivity.set(null);
+    this.router.navigate(['/actividades', activity.id]);
   }
 
   scopeLabel(cohortIds: string[]): string {

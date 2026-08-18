@@ -44,4 +44,25 @@ export class CourseService {
   delete(courseId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${courseId}`);
   }
+
+  updateColor(courseId: string, color: string | null): Observable<CourseResult> {
+    return this.http.patch<CourseResult>(`${this.baseUrl}/${courseId}/color`, { color });
+  }
+
+  uploadCoverImage(courseId: string, file: File): Observable<CourseResult> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<CourseResult>(`${this.baseUrl}/${courseId}/cover-image`, formData);
+  }
+
+  removeCoverImage(courseId: string): Observable<CourseResult> {
+    return this.http.delete<CourseResult>(`${this.baseUrl}/${courseId}/cover-image`);
+  }
+
+  // Cache-busted con un timestamp para que el <img> se refresque después de subir/quitar
+  // portada -- si no, el navegador sigue mostrando la imagen vieja con la misma URL.
+  getCoverImageUrl(courseId: string, cacheBust?: number): string {
+    const suffix = cacheBust ? `?v=${cacheBust}` : '';
+    return `${this.baseUrl}/${courseId}/cover-image${suffix}`;
+  }
 }

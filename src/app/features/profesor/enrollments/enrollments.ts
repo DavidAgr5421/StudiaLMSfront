@@ -3,11 +3,14 @@ import { DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CourseService } from '../../../core/services/course.service';
 import { EnrollmentService } from '../../../core/services/enrollment.service';
-import { EnrollmentResult } from '../../../core/models/enrollment.model';
+import { EnrollmentResult, AddStudentsToCourseResult } from '../../../core/models/enrollment.model';
+import { UserResult } from '../../../core/models/user.model';
+import { StudentPicker } from '../../../shared/ui/student-picker/student-picker';
+import { StudentInfoModal } from '../../../shared/ui/student-info-modal/student-info-modal';
 
 @Component({
   selector: 'app-enrollments',
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe, StudentPicker, StudentInfoModal],
   templateUrl: './enrollments.html',
   styleUrl: './enrollments.css',
 })
@@ -24,6 +27,15 @@ export class Enrollments {
 
   protected readonly pending = () => this.enrollments().filter((e) => e.status === 'Pendiente');
   protected readonly decided = () => this.enrollments().filter((e) => e.status !== 'Pendiente');
+
+  // Agregar estudiantes directamente (RF11) -- mismo flujo que antes vivía en course-detail,
+  // ahora acá para que "quién está inscrito" y "agregar a alguien" queden juntos.
+  protected readonly pendingStudents = signal<UserResult[]>([]);
+  protected readonly studentsErrorMessage = signal<string | null>(null);
+  protected readonly studentsResultMessage = signal<string | null>(null);
+  protected readonly isSubmittingStudents = signal(false);
+
+  protected readonly selectedStudentId = signal<string | null>(null);
 
   constructor() {
     this.load();
@@ -66,5 +78,58 @@ export class Enrollments {
 
   displayName(enrollment: EnrollmentResult): string {
     return enrollment.studentName || enrollment.studentEmail || `Estudiante ${enrollment.studentId}`;
+  }
+
+  pendingStudentIds(): ReadonlySet<string> {
+    const alreadyEnrolled = this.enrollments()
+      .filter((e) => e.status !== 'Rechazada')
+      .map((e) => e.studentId);
+    return new Set([...this.pendingStudents().map((student) => student.id), ...alreadyEnrolled]);
+  }
+
+  onStudentPicked(student: UserResult): void {
+    this.pendingStudents.update((current) => [...current, student]);
+  }
+
+  removePendingStudent(studentId: string): void {
+    this.pendingStudents.update((current) => current.filter((student) => student.id !== studentId));
+  }
+
+  submitStudents(): void {
+    const students = this.pendingStudents();
+    if (students.length === 0) return;
+
+    this.studentsErrorMessage.set(null);
+    this.studentsResultMessage.set(null);
+    this.isSubmittingStudents.set(true);
+
+    const identifiers = students.map((student) => student.email);
+
+    this.courseService.addStudents(this.courseId, identifiers).subscribe({
+      next: (result: AddStudentsToCourseResult) => {
+        const outcomes = result.outcomes;
+        const okCount = outcomes.filter((o) => o.success).length;
+        const failed = outcomes.filter((o) => !o.success);
+        this.studentsResultMessage.set(
+          `${okCount} de ${outcomes.length} agregados.` +
+            (failed.length > 0 ? ` Fallaron: ${failed.map((f) => f.identifier).join(', ')}` : ''),
+        );
+        this.pendingStudents.set([]);
+        this.isSubmittingStudents.set(false);
+        this.load();
+      },
+      error: () => {
+        this.isSubmittingStudents.set(false);
+        this.studentsErrorMessage.set('No se pudo agregar a los estudiantes.');
+      },
+    });
+  }
+
+  viewStudent(studentId: string): void {
+    this.selectedStudentId.set(studentId);
+  }
+
+  closeStudentInfo(): void {
+    this.selectedStudentId.set(null);
   }
 }

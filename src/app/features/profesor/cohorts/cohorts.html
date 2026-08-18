@@ -1,44 +1,45 @@
 <div class="mx-auto max-w-3xl px-4 py-8">
-  <a [routerLink]="['/profesor/cursos', courseId]" class="text-sm text-brand-600 hover:text-brand-700">
-    &larr; Volver al curso
+  <a [routerLink]="['/profesor/cursos', courseId]" class="group inline-flex items-center gap-1 text-sm text-brand-600 transition-colors hover:text-brand-700">
+    <svg class="h-4 w-4 transition-transform duration-150 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+    </svg>
+    Volver al curso
   </a>
 
-  <h1 class="mt-4 text-2xl font-semibold text-gray-900">Fichas</h1>
+  <h1 class="animate-fade-in-up mt-4 text-2xl font-semibold text-gray-900">Fichas</h1>
   <p class="mt-1 text-sm text-gray-500">Fichas de este curso.</p>
 
-  <form
-    [formGroup]="cohortForm"
-    (ngSubmit)="createCohort()"
-    class="mt-6 flex gap-2 rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
-  >
-    <input
-      type="text"
-      formControlName="name"
-      placeholder="Nombre de la ficha (ej. ADSO-2601)"
-      class="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-    />
-    <button type="submit" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
-      Crear ficha
-    </button>
+  <form [formGroup]="cohortForm" (ngSubmit)="createCohort()" class="animate-fade-in-up mt-6 flex gap-2 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <input type="text" formControlName="name" placeholder="Nombre de la ficha (ej. ADSO-2601)" class="input-field flex-1" />
+    <button type="submit" class="btn-primary shrink-0">Crear ficha</button>
   </form>
 
   @if (errorMessage()) {
-    <p class="mt-2 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
+    <p class="animate-fade-in-down mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
   }
 
   @if (isLoading()) {
-    <p class="mt-6 text-sm text-gray-500">Cargando…</p>
+    <div class="mt-6 space-y-4">
+      @for (i of [1, 2]; track i) {
+        <div class="card space-y-2 p-5">
+          <div class="skeleton h-5 w-1/3"></div>
+          <div class="skeleton h-3 w-1/4"></div>
+        </div>
+      }
+    </div>
   } @else if (cohorts().length === 0) {
-    <p class="mt-6 text-sm text-gray-400">Todavía no creaste ninguna ficha en este curso.</p>
+    <div class="animate-fade-in-up mt-6 rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
+      <p class="text-sm text-gray-400">Todavía no creaste ninguna ficha en este curso.</p>
+    </div>
   }
 
   <ul class="mt-6 space-y-4">
-    @for (cohort of cohorts(); track cohort.id) {
-      <li class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-        <h2 class="font-semibold text-gray-900">{{ cohort.name }}</h2>
-        <p class="mt-1 text-xs text-gray-500">
-          {{ cohort.studentIds.length }} estudiante(s) asignado(s)
-        </p>
+    @for (cohort of cohorts(); track cohort.id; let i = $index) {
+      <li class="animate-fade-in-up card p-5" [style.animation-delay.ms]="i * 50">
+        <div class="flex items-center gap-2">
+          <h2 class="font-semibold text-gray-900">{{ cohort.name }}</h2>
+          <span class="badge bg-brand-50 text-brand-700">{{ cohort.studentIds.length }} estudiante(s)</span>
+        </div>
 
         <div class="mt-3">
           <app-student-picker
@@ -52,13 +53,9 @@
         @if (pendingStudentsFor(cohort.id).length > 0) {
           <ul class="mt-3 flex flex-wrap gap-2">
             @for (student of pendingStudentsFor(cohort.id); track student.id) {
-              <li class="flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs text-brand-700">
+              <li class="animate-pop-in flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs text-brand-700">
                 {{ student.name || student.email }}
-                <button
-                  type="button"
-                  (click)="removePendingStudent(cohort.id, student.id)"
-                  class="text-brand-500 hover:text-brand-800"
-                >
+                <button type="button" (click)="removePendingStudent(cohort.id, student.id)" class="text-brand-500 transition-colors hover:text-brand-800">
                   ×
                 </button>
               </li>
@@ -68,14 +65,14 @@
             type="button"
             [disabled]="assigningCohortId() === cohort.id"
             (click)="submitPendingStudents(cohort.id)"
-            class="mt-3 rounded-md bg-brand-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60"
+            class="btn-primary mt-3 px-4 py-1.5"
           >
             {{ assigningCohortId() === cohort.id ? 'Asignando…' : 'Asignar ' + pendingStudentsFor(cohort.id).length + ' estudiante(s)' }}
           </button>
         }
 
         @if (assignErrors()[cohort.id]) {
-          <p class="mt-2 text-xs text-red-600">{{ assignErrors()[cohort.id] }}</p>
+          <p class="animate-fade-in-down mt-2 text-xs text-red-600">{{ assignErrors()[cohort.id] }}</p>
         }
       </li>
     }

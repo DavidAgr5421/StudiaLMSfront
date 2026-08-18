@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EnrollmentService } from '../../../core/services/enrollment.service';
@@ -14,7 +15,7 @@ export interface EnrolledCourse {
 
 @Component({
   selector: 'app-estudiante-cursos',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './cursos.html',
   styleUrl: './cursos.css',
 })
@@ -27,8 +28,35 @@ export class EstudianteCursos {
   protected readonly enrolledCourses = signal<EnrolledCourse[]>([]);
   protected readonly pendingEnrollments = signal<EnrollmentResult[]>([]);
 
+  protected readonly invitationCode = signal('');
+  protected readonly isJoining = signal(false);
+  protected readonly joinError = signal<string | null>(null);
+  protected readonly joinSuccessMessage = signal<string | null>(null);
+
   constructor() {
     this.load();
+  }
+
+  joinByCode(): void {
+    const code = this.invitationCode().trim().toUpperCase();
+    if (!code) return;
+
+    this.isJoining.set(true);
+    this.joinError.set(null);
+    this.joinSuccessMessage.set(null);
+
+    this.enrollmentService.enrollByInvitation(code).subscribe({
+      next: () => {
+        this.isJoining.set(false);
+        this.invitationCode.set('');
+        this.joinSuccessMessage.set('¡Listo! Te uniste al curso.');
+        this.load();
+      },
+      error: () => {
+        this.isJoining.set(false);
+        this.joinError.set('No se pudo unir al curso. Verificá que el código sea correcto y que no estés ya inscrito.');
+      },
+    });
   }
 
   private load(): void {

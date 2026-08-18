@@ -17,6 +17,7 @@ export class Login {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly infoMessage = signal<string | null>((history.state as { message?: string })?.message ?? null);
   protected readonly isSubmitting = signal(false);
+  protected readonly currentYear = new Date().getFullYear();
 
   protected readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],

@@ -1,16 +1,28 @@
-<div class="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-  <div class="animate-scale-in w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
+<div class="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 px-4 backdrop-blur-[2px]">
+  <div class="animate-pop-in w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl">
     <div class="flex items-start justify-between gap-4">
       <h2 class="text-lg font-semibold text-gray-900">Información del estudiante</h2>
-      <button type="button" (click)="closed.emit()" class="shrink-0 text-gray-400 hover:text-gray-600">✕</button>
+      <button
+        type="button"
+        (click)="closed.emit()"
+        class="shrink-0 rounded-md p-1 text-gray-400 transition-all duration-150 hover:rotate-90 hover:bg-gray-100 hover:text-gray-600"
+      >
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
 
     @if (isLoading()) {
-      <p class="mt-4 text-sm text-gray-500">Cargando…</p>
+      <div class="mt-4 space-y-3">
+        <div class="skeleton h-4 w-1/2"></div>
+        <div class="skeleton h-4 w-3/4"></div>
+        <div class="skeleton h-4 w-2/3"></div>
+      </div>
     } @else if (errorMessage()) {
-      <p class="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
+      <p class="animate-fade-in-down mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
     } @else if (user(); as u) {
-      <dl class="mt-4 space-y-3 text-sm">
+      <dl class="animate-fade-in-up mt-4 space-y-3 text-sm">
         <div>
           <dt class="text-xs font-medium text-gray-500">Nombre</dt>
           <dd class="text-gray-900">{{ u.name || 'Sin nombre registrado' }}</dd>
@@ -31,9 +43,7 @@
     }
 
     <div class="mt-6 flex justify-end">
-      <button type="button" (click)="closed.emit()" class="rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100">
-        Cerrar
-      </button>
+      <button type="button" (click)="closed.emit()" class="btn-ghost">Cerrar</button>
     </div>
   </div>
 </div>

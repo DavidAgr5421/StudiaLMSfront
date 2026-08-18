@@ -21,6 +21,10 @@ export class ActivityService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/activities`;
 
+  getById(activityId: string): Observable<ActivityResult> {
+    return this.http.get<ActivityResult>(`${this.baseUrl}/${activityId}`);
+  }
+
   create(params: CreateActivityParams): Observable<ActivityResult> {
     const formData = new FormData();
     formData.append('sectionId', params.sectionId);

@@ -1,44 +1,101 @@
 <div class="mx-auto max-w-5xl px-4 py-8">
-  <div class="animate-fade-in-up">
-    <h1 class="text-2xl font-semibold text-gray-900">Mis cursos</h1>
-    <p class="mt-1 text-sm text-gray-500">Cursos en los que estás inscrito.</p>
+  <div class="animate-fade-in-up flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900">Mis cursos</h1>
+      <p class="mt-1 text-sm text-gray-500">Cursos en los que estás inscrito.</p>
+    </div>
+  </div>
+
+  <!-- Unirse con código de invitación -->
+  <div class="card animate-fade-in-up mt-6 p-6" style="animation-delay: 40ms">
+    <h2 class="font-semibold text-gray-900">Unirme con un código</h2>
+    <p class="mt-1 text-xs text-gray-500">
+      Pedile el código de invitación a tu profesor -- te une al curso al instante, sin importar el modo de inscripción.
+    </p>
+
+    <form (ngSubmit)="joinByCode()" class="mt-3 flex flex-wrap items-start gap-2">
+      <input
+        type="text"
+        [ngModel]="invitationCode()"
+        (ngModelChange)="invitationCode.set($event)"
+        name="invitationCode"
+        placeholder="Ej. ULUGNS2W"
+        autocomplete="off"
+        maxlength="16"
+        class="input-field w-48 font-mono uppercase tracking-[0.15em]"
+      />
+      <button type="submit" [disabled]="isJoining() || !invitationCode().trim()" class="btn-primary">
+        @if (isJoining()) {
+          <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+          </svg>
+        }
+        {{ isJoining() ? 'Uniendo…' : 'Unirme' }}
+      </button>
+    </form>
+
+    @if (joinSuccessMessage()) {
+      <p class="animate-pop-in mt-3 flex items-center gap-1.5 rounded-lg bg-brand-50 px-3 py-2 text-sm text-brand-700">
+        <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {{ joinSuccessMessage() }}
+      </p>
+    }
+    @if (joinError()) {
+      <p class="animate-fade-in-down mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{{ joinError() }}</p>
+    }
   </div>
 
   @if (pendingEnrollments().length > 0) {
     <div
-      class="animate-fade-in-up mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+      class="animate-fade-in-up mt-6 flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
       style="animation-delay: 80ms"
     >
+      <svg class="h-5 w-5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+      </svg>
       Tenés {{ pendingEnrollments().length }} solicitud(es) de inscripción pendiente(s) de aprobación por el
       profesor.
     </div>
   }
 
   @if (isLoading()) {
-    <p class="mt-8 text-sm text-gray-500">Cargando…</p>
+    <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      @for (i of [1, 2, 3]; track i) {
+        <li class="card space-y-3 p-5">
+          <div class="skeleton h-5 w-2/3"></div>
+          <div class="skeleton h-3 w-1/2"></div>
+        </li>
+      }
+    </ul>
   } @else if (errorMessage()) {
-    <p class="mt-8 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
+    <p class="animate-fade-in-down mt-8 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
   } @else if (enrolledCourses().length === 0) {
     <div class="animate-fade-in-up mt-8 rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center">
-      <p class="text-sm text-gray-500">Todavía no estás inscrito en ningún curso.</p>
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-50">
+        <svg class="h-6 w-6 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+        </svg>
+      </div>
+      <p class="mt-3 text-sm text-gray-500">Todavía no estás inscrito en ningún curso.</p>
       <p class="mt-1 text-xs text-gray-400">
         Pedile a tu profesor el código de invitación o que te agregue al curso.
       </p>
+      <a routerLink="/cursos" class="btn-secondary mt-4 inline-flex">Explorar cursos</a>
     </div>
   } @else {
     <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       @for (item of enrolledCourses(); track item.course.id; let i = $index) {
         <li class="animate-fade-in-up" [style.animation-delay.ms]="i * 60">
-          <a
-            [routerLink]="['/estudiante/cursos', item.course.id]"
-            class="group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
-          >
+          <a [routerLink]="['/estudiante/cursos', item.course.id]" class="card-interactive group block p-5">
             <div class="flex items-start justify-between gap-2">
               <h2 class="font-semibold text-gray-900 transition-colors group-hover:text-brand-700">
                 {{ item.course.name }}
               </h2>
               <span
-                class="shrink-0 rounded-full px-2 py-0.5 text-xs font-medium"
+                class="badge"
                 [class]="item.course.status === 'Activo' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500'"
               >
                 {{ item.course.status }}

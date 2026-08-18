@@ -28,4 +28,10 @@ export class EnrollmentService {
   requestEnrollment(courseId: string): Observable<EnrollmentResult> {
     return this.http.post<EnrollmentResult>(`${this.baseUrl}/requests`, { courseId });
   }
+
+  // Une al estudiante directo, sin importar el modo de inscripción del curso -- el
+  // código de invitación siempre pasa por alto Abierta/ConAprobacion.
+  enrollByInvitation(invitationCode: string): Observable<EnrollmentResult> {
+    return this.http.post<EnrollmentResult>(`${this.baseUrl}/invitation`, { invitationCode });
+  }
 }

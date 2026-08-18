@@ -56,6 +56,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/profesor/cohorts/cohorts').then((m) => m.Cohorts),
       },
       {
+        path: 'cursos/:courseId/configuracion',
+        loadComponent: () =>
+          import('./features/profesor/course-settings/course-settings').then((m) => m.CourseSettings),
+      },
+      {
         path: 'actividades/:activityId/entregas',
         loadComponent: () =>
           import('./features/profesor/activity-submissions/activity-submissions').then(
@@ -84,6 +89,11 @@ export const routes: Routes = [
     path: 'perfil',
     canActivate: [authGuard],
     loadComponent: () => import('./features/perfil/perfil').then((m) => m.Perfil),
+  },
+  {
+    path: 'actividades/:activityId',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/actividad/actividad').then((m) => m.Actividad),
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },

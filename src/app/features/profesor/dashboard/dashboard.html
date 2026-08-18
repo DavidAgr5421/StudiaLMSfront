@@ -1,37 +1,50 @@
 <div class="mx-auto max-w-5xl px-4 py-8">
-  <div class="flex items-center justify-between">
+  <div class="animate-fade-in-up flex items-center justify-between gap-4">
     <div>
       <h1 class="text-2xl font-semibold text-gray-900">Mis cursos</h1>
       <p class="mt-1 text-sm text-gray-500">Cursos que creaste en Studia.</p>
     </div>
-    <a
-      routerLink="/profesor/cursos/nuevo"
-      class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-    >
-      + Nuevo curso
+    <a routerLink="/profesor/cursos/nuevo" class="btn-primary shrink-0">
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      Nuevo curso
     </a>
   </div>
 
   @if (isLoading()) {
-    <p class="mt-8 text-sm text-gray-500">Cargando…</p>
+    <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      @for (i of [1, 2, 3]; track i) {
+        <li class="card space-y-3 p-5">
+          <div class="skeleton h-5 w-2/3"></div>
+          <div class="skeleton h-3 w-1/2"></div>
+          <div class="skeleton h-3 w-1/3"></div>
+        </li>
+      }
+    </ul>
   } @else if (errorMessage()) {
-    <p class="mt-8 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
+    <p class="animate-fade-in-down mt-8 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
   } @else if (courses().length === 0) {
-    <div class="mt-8 rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center">
-      <p class="text-sm text-gray-500">Todavía no creaste ningún curso.</p>
+    <div class="animate-fade-in-up mt-8 rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-50">
+        <svg class="h-6 w-6 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+        </svg>
+      </div>
+      <p class="mt-3 text-sm text-gray-500">Todavía no creaste ningún curso.</p>
+      <a routerLink="/profesor/cursos/nuevo" class="btn-secondary mt-4 inline-flex">Crear tu primer curso</a>
     </div>
   } @else {
     <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      @for (course of courses(); track course.id) {
-        <li class="relative">
-          <a
-            [routerLink]="['/profesor/cursos', course.id]"
-            class="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
-          >
+      @for (course of courses(); track course.id; let i = $index) {
+        <li class="animate-fade-in-up group relative" [style.animation-delay.ms]="i * 50">
+          <a [routerLink]="['/profesor/cursos', course.id]" class="card-interactive block p-5">
             <div class="flex items-start justify-between gap-2">
-              <h2 class="font-semibold text-gray-900 pr-6">{{ course.name }}</h2>
+              <h2 class="truncate pr-6 font-semibold text-gray-900 transition-colors group-hover:text-brand-700">
+                {{ course.name }}
+              </h2>
               <span
-                class="shrink-0 rounded-full px-2 py-0.5 text-xs font-medium"
+                class="badge"
                 [class]="course.status === 'Activo' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500'"
               >
                 {{ course.status }}
@@ -39,14 +52,19 @@
             </div>
             <p class="mt-2 text-xs text-gray-500">Inscripción: {{ course.enrollmentMode }}</p>
             <p class="mt-1 text-xs text-gray-400">Código: {{ course.invitationCode }}</p>
+            <p class="mt-3 flex items-center gap-1 text-xs font-medium text-brand-600 opacity-0 transition-opacity group-hover:opacity-100">
+              Administrar curso →
+            </p>
           </a>
           <button
             type="button"
             (click)="requestDelete(course, $event)"
             title="Eliminar curso"
-            class="absolute right-3 top-3 rounded-md p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600"
+            class="absolute right-3 top-3 rounded-md p-1.5 text-gray-400 opacity-0 transition-all duration-150 hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 focus:opacity-100"
           >
-            🗑
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+            </svg>
           </button>
         </li>
       }

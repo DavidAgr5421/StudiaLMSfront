@@ -1,16 +1,61 @@
 <div class="mx-auto max-w-3xl px-4 py-8">
-  <a [routerLink]="['/profesor/cursos', courseId]" class="text-sm text-brand-600 hover:text-brand-700">
-    &larr; Volver al curso
+  <a [routerLink]="['/profesor/cursos', courseId]" class="group inline-flex items-center gap-1 text-sm text-brand-600 transition-colors hover:text-brand-700">
+    <svg class="h-4 w-4 transition-transform duration-150 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+    </svg>
+    Volver al curso
   </a>
 
-  <h1 class="mt-4 text-2xl font-semibold text-gray-900">Inscripciones</h1>
+  <h1 class="animate-fade-in-up mt-4 text-2xl font-semibold text-gray-900">Inscripciones</h1>
+  <p class="mt-1 text-sm text-gray-500">Quién está inscrito en el curso, quién espera aprobación y a quién querés sumar.</p>
+
+  <!-- Agregar estudiantes -->
+  <div class="card animate-fade-in-up mt-6 p-6" style="animation-delay: 40ms">
+    <h2 class="font-semibold text-gray-900">Agregar estudiantes</h2>
+    <p class="mt-1 text-xs text-gray-500">Buscá por nombre o email y hacé clic para agregarlos a la lista. Quedan inscritos de inmediato.</p>
+
+    <app-student-picker class="mt-3 block" [excludeIds]="pendingStudentIds()" (picked)="onStudentPicked($event)" />
+
+    @if (pendingStudents().length > 0) {
+      <ul class="mt-3 flex flex-wrap gap-2">
+        @for (student of pendingStudents(); track student.id) {
+          <li class="animate-pop-in flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs text-brand-700">
+            {{ student.name || student.email }}
+            <button type="button" (click)="removePendingStudent(student.id)" class="text-brand-500 transition-colors hover:text-brand-800">
+              ×
+            </button>
+          </li>
+        }
+      </ul>
+      <button type="button" [disabled]="isSubmittingStudents()" (click)="submitStudents()" class="btn-primary mt-3">
+        @if (isSubmittingStudents()) {
+          <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+          </svg>
+        }
+        {{ isSubmittingStudents() ? 'Agregando…' : 'Agregar ' + pendingStudents().length + ' estudiante(s)' }}
+      </button>
+    }
+
+    @if (studentsResultMessage()) {
+      <p class="animate-fade-in-down mt-2 text-xs text-gray-600">{{ studentsResultMessage() }}</p>
+    }
+    @if (studentsErrorMessage()) {
+      <p class="animate-fade-in-down mt-2 text-xs text-red-600">{{ studentsErrorMessage() }}</p>
+    }
+  </div>
 
   @if (isLoading()) {
-    <p class="mt-6 text-sm text-gray-500">Cargando…</p>
+    <div class="mt-6 space-y-2">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="card h-14 p-4"><div class="skeleton h-full w-full"></div></div>
+      }
+    </div>
   } @else if (errorMessage()) {
-    <p class="mt-6 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
+    <p class="animate-fade-in-down mt-6 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
   } @else {
-    <section class="mt-6">
+    <section class="mt-8">
       <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-500">Pendientes</h2>
 
       @if (pending().length === 0) {
@@ -18,18 +63,18 @@
       }
 
       <ul class="mt-3 space-y-2">
-        @for (enrollment of pending(); track enrollment.id) {
-          <li class="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm">
-            <div>
-              <p class="text-sm font-medium text-gray-900">{{ displayName(enrollment) }}</p>
+        @for (enrollment of pending(); track enrollment.id; let i = $index) {
+          <li class="animate-fade-in-up flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm transition-shadow hover:shadow-md" [style.animation-delay.ms]="i * 40">
+            <button type="button" (click)="viewStudent(enrollment.studentId)" class="text-left">
+              <p class="text-sm font-medium text-gray-900 transition-colors hover:text-brand-700 hover:underline">{{ displayName(enrollment) }}</p>
               <p class="text-xs text-gray-500">Solicitado {{ enrollment.requestedAtUtc | date: 'medium' }}</p>
-            </div>
+            </button>
             <div class="flex gap-2">
               <button
                 type="button"
                 [disabled]="processingId() === enrollment.id"
                 (click)="approve(enrollment.id)"
-                class="rounded-md bg-brand-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700 disabled:opacity-60"
+                class="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0 disabled:opacity-60"
               >
                 Aprobar
               </button>
@@ -37,7 +82,7 @@
                 type="button"
                 [disabled]="processingId() === enrollment.id"
                 (click)="reject(enrollment.id)"
-                class="rounded-md border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-60"
+                class="rounded-lg border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 transition-all duration-150 hover:-translate-y-0.5 hover:bg-red-50 active:translate-y-0 disabled:opacity-60"
               >
                 Rechazar
               </button>
@@ -48,7 +93,7 @@
     </section>
 
     <section class="mt-8">
-      <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-500">Historial</h2>
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-500">Estudiantes del curso</h2>
 
       @if (decided().length === 0) {
         <p class="mt-2 text-sm text-gray-400">Todavía no hay inscripciones decididas.</p>
@@ -56,17 +101,20 @@
 
       <ul class="mt-3 space-y-2">
         @for (enrollment of decided(); track enrollment.id) {
-          <li class="flex items-center justify-between rounded-lg border border-gray-100 bg-white px-4 py-3">
-            <p class="text-sm text-gray-700">{{ displayName(enrollment) }}</p>
-            <span
-              class="rounded-full px-2 py-0.5 text-xs font-medium"
-              [class]="enrollment.status === 'Aprobada' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500'"
-            >
+          <li class="flex items-center justify-between rounded-lg border border-gray-100 bg-white px-4 py-3 transition-colors hover:bg-gray-50/60">
+            <button type="button" (click)="viewStudent(enrollment.studentId)" class="text-sm text-gray-700 transition-colors hover:text-brand-700 hover:underline">
+              {{ displayName(enrollment) }}
+            </button>
+            <span class="badge" [class]="enrollment.status === 'Aprobada' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500'">
               {{ enrollment.status }}
             </span>
           </li>
         }
       </ul>
     </section>
+  }
+
+  @if (selectedStudentId(); as studentId) {
+    <app-student-info-modal [userId]="studentId" (closed)="closeStudentInfo()" />
   }
 </div>

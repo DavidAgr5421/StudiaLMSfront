@@ -1,21 +1,21 @@
 import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CourseService } from '../../../core/services/course.service';
 import { SectionService } from '../../../core/services/section.service';
 import { CourseResult } from '../../../core/models/course.model';
 import { SectionResult } from '../../../core/models/section.model';
 import { ActivityResult } from '../../../core/models/activity.model';
-import { ActivityDetail } from '../../../shared/ui/activity-detail/activity-detail';
 
 @Component({
   selector: 'app-estudiante-course-detail',
-  imports: [RouterLink, DatePipe, ActivityDetail],
+  imports: [RouterLink, DatePipe],
   templateUrl: './course-detail.html',
   styleUrl: './course-detail.css',
 })
 export class EstudianteCourseDetail {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly courseService = inject(CourseService);
   private readonly sectionService = inject(SectionService);
 
@@ -31,8 +31,6 @@ export class EstudianteCourseDetail {
   protected readonly activitiesBySection = signal<Record<string, ActivityResult[]>>({});
   protected readonly loadingActivitiesForSectionId = signal<string | null>(null);
   protected readonly expandedSectionId = signal<string | null>(null);
-
-  protected readonly selectedActivity = signal<ActivityResult | null>(null);
 
   constructor() {
     this.loadCourse();
@@ -80,11 +78,7 @@ export class EstudianteCourseDetail {
   }
 
   openActivity(activity: ActivityResult): void {
-    this.selectedActivity.set(activity);
-  }
-
-  closeActivity(): void {
-    this.selectedActivity.set(null);
+    this.router.navigate(['/actividades', activity.id]);
   }
 
   isOverdue(dueDateUtc: string): boolean {

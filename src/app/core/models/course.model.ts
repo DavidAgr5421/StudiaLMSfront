@@ -11,4 +11,7 @@ export interface CourseResult {
   invitationCode: string;
   profesorId: string;
   profesorName: string | null;
+  // Personalización visual, ambas opcionales.
+  color: string | null;
+  coverImageFileName: string | null;
 }

@@ -1,14 +1,30 @@
 <div class="flex min-h-screen flex-col">
-  <header class="sticky top-0 z-30 bg-gradient-to-r from-brand-700 via-brand-600 to-brand-500 text-white shadow-md">
-    <div class="flex items-center justify-between gap-4 px-4 py-2.5">
+  <header class="sticky top-0 z-30 overflow-hidden bg-gradient-to-r from-brand-700 via-brand-600 to-brand-500 text-white shadow-md">
+    <!-- Decoración: blobs difusos flotando detrás del contenido -->
+    <div class="pointer-events-none absolute inset-0 overflow-hidden">
+      <div class="animate-float-blob absolute -left-10 -top-16 h-40 w-40 rounded-full bg-white/10 blur-2xl"></div>
+      <div class="animate-float-blob absolute -right-6 -top-20 h-48 w-48 rounded-full bg-brand-300/20 blur-3xl" style="animation-delay: -3s"></div>
+    </div>
+
+    <div class="relative flex items-center justify-between gap-4 px-4 py-2.5">
       <!-- Izquierda: toggle, logo, Cursos -->
       <div class="flex min-w-0 items-center gap-2">
         @if (auth.isLoggedIn()) {
           <button
             type="button"
+            (click)="toggleMobileSidebar()"
+            title="Mostrar/ocultar navegación"
+            class="inline-flex shrink-0 rounded-md p-2 text-white/90 transition-all duration-150 hover:bg-white/10 hover:text-white active:scale-95 md:hidden"
+          >
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <button
+            type="button"
             (click)="toggleSidebar()"
             title="Mostrar/ocultar barra lateral"
-            class="hidden shrink-0 rounded-md p-2 text-white/90 transition-colors hover:bg-white/10 hover:text-white md:inline-flex"
+            class="hidden shrink-0 rounded-md p-2 text-white/90 transition-all duration-150 hover:bg-white/10 hover:text-white active:scale-95 md:inline-flex"
           >
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -16,14 +32,22 @@
           </button>
         }
 
-        <a [routerLink]="auth.isLoggedIn() ? homeLink() : '/cursos'" class="flex shrink-0 items-center gap-2 pl-1 pr-2">
-          <span class="h-7 w-7 rounded-full bg-white shadow-sm"></span>
+        <a
+          [routerLink]="auth.isLoggedIn() ? homeLink() : '/cursos'"
+          class="group flex shrink-0 items-center gap-2 pl-1 pr-2 transition-transform duration-150 active:scale-95"
+        >
+          <span
+            class="flex h-7 w-7 items-center justify-center rounded-full bg-white text-sm font-bold text-brand-600 shadow-sm transition-transform duration-300 group-hover:rotate-[360deg]"
+          >
+            S
+          </span>
           <span class="text-lg font-semibold tracking-wide">STUDIA</span>
         </a>
 
         <a
           routerLink="/cursos"
-          class="hidden shrink-0 rounded-md px-3 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white sm:inline-block"
+          routerLinkActive="after:scale-x-100 text-white"
+          class="relative hidden shrink-0 rounded-md px-3 py-1.5 text-sm font-medium text-white/90 transition-colors after:absolute after:bottom-0.5 after:left-3 after:right-3 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:bg-white after:transition-transform after:duration-200 hover:text-white hover:after:scale-x-100 sm:inline-block"
         >
           Cursos
         </a>
@@ -37,15 +61,22 @@
       <!-- Derecha: usuario, rol, cerrar sesión -- o invitación a loguearse -->
       @if (auth.isLoggedIn()) {
         <div class="flex shrink-0 items-center gap-3">
-          <div class="hidden text-right leading-tight sm:block">
-            <p class="max-w-[12rem] truncate text-sm font-medium text-white">{{ displayName() }}</p>
-            <p class="text-xs text-brand-100">{{ auth.role() }}</p>
+          <div class="hidden items-center gap-2 sm:flex">
+            <span
+              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-xs font-semibold text-white ring-2 ring-white/30"
+            >
+              {{ initials() }}
+            </span>
+            <div class="text-right leading-tight">
+              <p class="max-w-[12rem] truncate text-sm font-medium text-white">{{ displayName() }}</p>
+              <p class="text-xs text-brand-100">{{ auth.role() }}</p>
+            </div>
           </div>
 
           <button
             type="button"
             (click)="requestLogout()"
-            class="flex shrink-0 items-center gap-1.5 rounded-md bg-white px-3 py-1.5 text-sm font-medium text-brand-700 shadow-sm transition-colors hover:bg-brand-50"
+            class="flex shrink-0 items-center gap-1.5 rounded-md bg-white px-3 py-1.5 text-sm font-medium text-brand-700 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-brand-50 hover:shadow active:translate-y-0"
           >
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path
@@ -67,7 +98,7 @@
           </a>
           <a
             routerLink="/login"
-            class="rounded-md bg-white px-3 py-1.5 text-sm font-medium text-brand-700 shadow-sm transition-colors hover:bg-brand-50"
+            class="rounded-md bg-white px-3 py-1.5 text-sm font-medium text-brand-700 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-brand-50 hover:shadow active:translate-y-0"
           >
             Iniciar sesión
           </a>
@@ -78,12 +109,24 @@
 
   <div class="flex min-h-0 flex-1">
     @if (auth.isLoggedIn()) {
+      <!-- Sidebar de escritorio: colapsa su ancho con transición -->
       <div
         class="hidden overflow-hidden transition-[width] duration-300 ease-in-out md:block"
         [style.width.px]="isSidebarOpen() ? 256 : 0"
       >
-        <app-sidebar />
+        <app-sidebar class="block w-64" />
       </div>
+
+      <!-- Drawer móvil: overlay + panel deslizante -->
+      @if (isMobileSidebarOpen()) {
+        <div
+          class="animate-fade-in fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-[2px] md:hidden"
+          (click)="closeMobileSidebar()"
+        ></div>
+        <div class="animate-slide-in-left fixed inset-y-0 left-0 z-50 w-64 shadow-2xl md:hidden">
+          <app-sidebar class="block h-full" />
+        </div>
+      }
     }
 
     <main class="min-w-0 flex-1 overflow-y-auto">

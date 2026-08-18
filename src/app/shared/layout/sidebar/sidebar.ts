@@ -11,7 +11,6 @@ import { CourseResult } from '../../../core/models/course.model';
 import { SectionResult } from '../../../core/models/section.model';
 import { ActivityResult } from '../../../core/models/activity.model';
 import { EnrollmentResult } from '../../../core/models/enrollment.model';
-import { ActivityDetail } from '../../ui/activity-detail/activity-detail';
 
 interface EnrolledCourse {
   enrollment: EnrollmentResult;
@@ -20,7 +19,7 @@ interface EnrolledCourse {
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, NgTemplateOutlet, ActivityDetail],
+  imports: [RouterLink, NgTemplateOutlet],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })
@@ -55,7 +54,6 @@ export class Sidebar {
   // profundidad -- "c:{id}", "c:{id}:secciones", "c:{id}:secciones:s:{id}", etc.
   protected readonly expandedKeys = signal<Set<string>>(new Set());
 
-  protected readonly selectedActivity = signal<ActivityResult | null>(null);
 
   constructor() {
     if (this.isProfesor()) {
@@ -140,10 +138,6 @@ export class Sidebar {
 
   onActivityClick(activity: ActivityResult, mode: 'view' | 'grade'): void {
     if (mode === 'grade') this.router.navigate(['/profesor/actividades', activity.id, 'entregas']);
-    else this.selectedActivity.set(activity);
-  }
-
-  closeActivity(): void {
-    this.selectedActivity.set(null);
+    else this.router.navigate(['/actividades', activity.id]);
   }
 }

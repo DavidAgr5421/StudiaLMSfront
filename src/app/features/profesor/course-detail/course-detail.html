@@ -1,33 +1,36 @@
 <div class="mx-auto max-w-4xl px-4 py-8">
-  <a routerLink="/profesor" class="text-sm text-brand-600 hover:text-brand-700">&larr; Volver a mis cursos</a>
+  <a routerLink="/profesor" class="group inline-flex items-center gap-1 text-sm text-brand-600 transition-colors hover:text-brand-700">
+    <svg class="h-4 w-4 transition-transform duration-150 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+    </svg>
+    Volver a mis cursos
+  </a>
 
   @if (course(); as c) {
-    <div class="mt-4 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <div class="animate-fade-in-up relative mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div class="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-brand-600 via-brand-500 to-brand-300"></div>
       <div class="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 class="text-2xl font-semibold text-gray-900">{{ c.name }}</h1>
           <p class="mt-1 text-sm text-gray-500">
             {{ c.status }} · Inscripción {{ c.enrollmentMode }} · Código:
-            <span class="font-mono">{{ c.invitationCode }}</span>
+            <span class="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-xs">{{ c.invitationCode }}</span>
           </p>
         </div>
-        <div class="flex gap-2 text-sm">
-          <a
-            [routerLink]="['/profesor/cursos', courseId, 'inscripciones']"
-            class="rounded-md border border-gray-300 px-3 py-1.5 font-medium text-gray-700 hover:bg-gray-50"
-          >
-            Inscripciones
-          </a>
-          <a
-            [routerLink]="['/profesor/cursos', courseId, 'fichas']"
-            class="rounded-md border border-gray-300 px-3 py-1.5 font-medium text-gray-700 hover:bg-gray-50"
-          >
-            Fichas
+        <div class="flex flex-wrap gap-2 text-sm">
+          <a [routerLink]="['/profesor/cursos', courseId, 'inscripciones']" class="btn-secondary">Inscripciones</a>
+          <a [routerLink]="['/profesor/cursos', courseId, 'fichas']" class="btn-secondary">Fichas</a>
+          <a [routerLink]="['/profesor/cursos', courseId, 'configuracion']" class="btn-secondary">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.28z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Configuración
           </a>
           <button
             type="button"
             (click)="requestDeleteCourse()"
-            class="rounded-md border border-red-300 px-3 py-1.5 font-medium text-red-700 hover:bg-red-50"
+            class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-700 transition-all duration-150 hover:-translate-y-0.5 hover:bg-red-50 active:translate-y-0"
           >
             Eliminar curso
           </button>
@@ -37,69 +40,32 @@
   }
 
   @if (notifyMessage()) {
-    <p class="mt-4 rounded-md bg-brand-50 px-3 py-2 text-sm text-brand-700">{{ notifyMessage() }}</p>
+    <p class="animate-fade-in-down mt-4 flex items-center gap-1.5 rounded-lg bg-brand-50 px-3 py-2 text-sm text-brand-700">
+      <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      {{ notifyMessage() }}
+    </p>
   }
-
-  <!-- Agregar estudiantes -->
-  <div class="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <h2 class="font-semibold text-gray-900">Agregar estudiantes al curso</h2>
-    <p class="mt-1 text-xs text-gray-500">Buscá por nombre o email y hacé clic para agregarlos a la lista.</p>
-
-    <app-student-picker class="mt-3 block" [excludeIds]="pendingStudentIds()" (picked)="onStudentPicked($event)" />
-
-    @if (pendingStudents().length > 0) {
-      <ul class="mt-3 flex flex-wrap gap-2">
-        @for (student of pendingStudents(); track student.id) {
-          <li class="flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs text-brand-700">
-            {{ student.name || student.email }}
-            <button type="button" (click)="removePendingStudent(student.id)" class="text-brand-500 hover:text-brand-800">
-              ×
-            </button>
-          </li>
-        }
-      </ul>
-      <button
-        type="button"
-        (click)="submitStudents()"
-        class="mt-3 rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-      >
-        Agregar {{ pendingStudents().length }} estudiante(s)
-      </button>
-    }
-
-    @if (studentsResultMessage()) {
-      <p class="mt-2 text-xs text-gray-600">{{ studentsResultMessage() }}</p>
-    }
-    @if (studentsErrorMessage()) {
-      <p class="mt-2 text-xs text-red-600">{{ studentsErrorMessage() }}</p>
-    }
-  </div>
 
   <!-- Secciones -->
   <div class="mt-6 flex items-center justify-between">
     <h2 class="text-lg font-semibold text-gray-900">Secciones</h2>
-    <button
-      type="button"
-      (click)="isAddingSection.set(!isAddingSection())"
-      class="rounded-md border border-brand-600 px-3 py-1.5 text-sm font-medium text-brand-700 hover:bg-brand-50"
-    >
-      {{ isAddingSection() ? 'Cancelar' : '+ Nueva sección' }}
+    <button type="button" (click)="isAddingSection.set(!isAddingSection())" class="btn-secondary">
+      @if (!isAddingSection()) {
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+      }
+      {{ isAddingSection() ? 'Cancelar' : 'Nueva sección' }}
     </button>
   </div>
 
   @if (isAddingSection()) {
-    <form
-      [formGroup]="sectionForm"
-      (ngSubmit)="submitSection()"
-      class="mt-3 space-y-3 rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
-    >
+    <form [formGroup]="sectionForm" (ngSubmit)="submitSection()" class="animate-fade-in-up mt-3 space-y-3 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
       <div>
         <label class="block text-sm font-medium text-gray-700">Título</label>
-        <input
-          type="text"
-          formControlName="title"
-          class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-        />
+        <input type="text" formControlName="title" class="input-field mt-1" />
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700">Descripción</label>
@@ -131,11 +97,9 @@
       </div>
 
       @if (sectionErrorMessage()) {
-        <p class="text-xs text-red-600">{{ sectionErrorMessage() }}</p>
+        <p class="animate-fade-in-down text-xs text-red-600">{{ sectionErrorMessage() }}</p>
       }
-      <button type="submit" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
-        Crear sección
-      </button>
+      <button type="submit" class="btn-primary">Crear sección</button>
     </form>
   }
 
@@ -144,64 +108,52 @@
   }
 
   <ul class="mt-4 space-y-3">
-    @for (section of sections(); track section.id) {
-      <li class="rounded-xl border border-gray-200 bg-white shadow-sm">
+    @for (section of sections(); track section.id; let i = $index) {
+      <li class="animate-fade-in-up overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-200 hover:shadow-md" [style.animation-delay.ms]="i * 40">
         <div class="flex w-full items-center justify-between px-5 py-4">
           <button type="button" (click)="toggleSection(section.id)" class="flex flex-1 items-center gap-2 text-left">
             <span class="font-medium text-gray-900">{{ section.title }}</span>
-            <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500">{{ scopeLabel(section.cohortIds) }}</span>
+            <span class="badge bg-gray-100 text-gray-500">{{ scopeLabel(section.cohortIds) }}</span>
           </button>
           <div class="flex items-center gap-3">
             <button
               type="button"
               (click)="requestDeleteSection(section)"
               title="Eliminar sección"
-              class="text-gray-400 hover:text-red-600"
+              class="rounded-md p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
             >
-              🗑
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+              </svg>
             </button>
-            <button type="button" (click)="toggleSection(section.id)" class="text-xs text-gray-400">
-              {{ expandedSectionId() === section.id ? '▲' : '▼' }}
+            <button type="button" (click)="toggleSection(section.id)" class="rounded-md p-1 text-gray-400 transition-transform duration-200 hover:text-gray-600" [class.rotate-180]="expandedSectionId() === section.id">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              </svg>
             </button>
           </div>
         </div>
 
         @if (expandedSectionId() === section.id) {
-          <div class="border-t border-gray-100 px-5 py-4">
+          <div class="animate-fade-in-up border-t border-gray-100 px-5 py-4">
             @if (section.descriptionHtml) {
               <div class="prose prose-sm max-w-none text-gray-600" [innerHTML]="section.descriptionHtml"></div>
             }
 
             <div class="mt-3 flex gap-2">
-              <button
-                type="button"
-                (click)="notifyNewSection(section.id)"
-                class="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
-              >
+              <button type="button" (click)="notifyNewSection(section.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50">
                 Notificar nueva sección
               </button>
-              <button
-                type="button"
-                (click)="startAddingActivity(section.id)"
-                class="rounded-md border border-brand-600 px-2.5 py-1 text-xs font-medium text-brand-700 hover:bg-brand-50"
-              >
+              <button type="button" (click)="startAddingActivity(section.id)" class="rounded-lg border border-brand-600 px-2.5 py-1 text-xs font-medium text-brand-700 transition-colors hover:bg-brand-50">
                 + Actividad
               </button>
             </div>
 
             @if (addingActivityForSectionId() === section.id) {
-              <form
-                [formGroup]="activityForm"
-                (ngSubmit)="submitActivity(section.id)"
-                class="mt-4 space-y-3 rounded-lg bg-gray-50 p-4"
-              >
+              <form [formGroup]="activityForm" (ngSubmit)="submitActivity(section.id)" class="animate-fade-in-up mt-4 space-y-3 rounded-lg bg-gray-50 p-4">
                 <div>
                   <label class="block text-xs font-medium text-gray-700">Título</label>
-                  <input
-                    type="text"
-                    formControlName="title"
-                    class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                  />
+                  <input type="text" formControlName="title" class="input-field mt-1" />
                 </div>
                 <div>
                   <label class="block text-xs font-medium text-gray-700">Descripción</label>
@@ -210,18 +162,11 @@
                 <div class="grid grid-cols-2 gap-3">
                   <div>
                     <label class="block text-xs font-medium text-gray-700">Fecha límite</label>
-                    <input
-                      type="datetime-local"
-                      formControlName="dueDate"
-                      class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                    />
+                    <input type="datetime-local" formControlName="dueDate" class="input-field mt-1" />
                   </div>
                   <div>
                     <label class="block text-xs font-medium text-gray-700">Tipo</label>
-                    <select
-                      formControlName="type"
-                      class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                    >
+                    <select formControlName="type" class="input-field mt-1">
                       @for (type of activityTypes; track type) {
                         <option [value]="type">{{ type }}</option>
                       }
@@ -231,12 +176,7 @@
                 @if (activityForm.controls.type.value === 'ConArchivo') {
                   <div>
                     <label class="block text-xs font-medium text-gray-700">Máximo de archivos (entrega)</label>
-                    <input
-                      type="number"
-                      min="1"
-                      formControlName="maxFiles"
-                      class="mt-1 block w-32 rounded-md border border-gray-300 px-3 py-2 text-sm"
-                    />
+                    <input type="number" min="1" formControlName="maxFiles" class="input-field mt-1 w-32" />
                   </div>
                 }
 
@@ -268,10 +208,10 @@
                     type="file"
                     multiple
                     (change)="onActivityFilesSelected($event)"
-                    class="mt-1 block w-full text-xs text-gray-600"
+                    class="mt-1 block w-full text-xs text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-brand-700 hover:file:bg-brand-100"
                   />
                   @if (activityFilesErrorMessage()) {
-                    <p class="mt-1 text-xs text-red-600">{{ activityFilesErrorMessage() }}</p>
+                    <p class="animate-fade-in-down mt-1 text-xs text-red-600">{{ activityFilesErrorMessage() }}</p>
                   }
                   @if (activityFiles().length > 0) {
                     <ul class="mt-2 space-y-1">
@@ -288,20 +228,13 @@
                 </div>
 
                 @if (activityErrorMessage()) {
-                  <p class="text-xs text-red-600">{{ activityErrorMessage() }}</p>
+                  <p class="animate-fade-in-down text-xs text-red-600">{{ activityErrorMessage() }}</p>
                 }
                 <div class="flex gap-2">
-                  <button
-                    type="submit"
-                    class="rounded-md bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700"
-                  >
+                  <button type="submit" class="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0">
                     Crear actividad
                   </button>
-                  <button
-                    type="button"
-                    (click)="addingActivityForSectionId.set(null)"
-                    class="rounded-md px-3 py-1.5 text-sm font-medium text-gray-500 hover:bg-gray-100"
-                  >
+                  <button type="button" (click)="addingActivityForSectionId.set(null)" class="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-100">
                     Cancelar
                   </button>
                 </div>
@@ -312,9 +245,9 @@
               @for (activity of activitiesBySection()[section.id] ?? []; track activity.id) {
                 <li class="flex flex-wrap items-center justify-between gap-2 py-3">
                   <button type="button" (click)="openActivityDetail(activity)" class="flex-1 text-left">
-                    <p class="text-sm font-medium text-gray-900 hover:text-brand-700">
+                    <p class="text-sm font-medium text-gray-900 transition-colors hover:text-brand-700">
                       {{ activity.title }}
-                      <span class="ml-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-normal text-gray-500">{{ scopeLabel(activity.cohortIds) }}</span>
+                      <span class="badge bg-gray-100 font-normal text-gray-500">{{ scopeLabel(activity.cohortIds) }}</span>
                       @if (activity.files.length > 0) {
                         <span class="ml-1 text-xs font-normal text-gray-400">📎 {{ activity.files.length }}</span>
                       }
@@ -327,24 +260,13 @@
                     </p>
                   </button>
                   <div class="flex gap-2 text-xs">
-                    <a
-                      [routerLink]="['/profesor/actividades', activity.id, 'entregas']"
-                      class="rounded-md border border-gray-300 px-2.5 py-1 font-medium text-gray-600 hover:bg-gray-50"
-                    >
+                    <a [routerLink]="['/profesor/actividades', activity.id, 'entregas']" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700">
                       Ver entregas
                     </a>
-                    <button
-                      type="button"
-                      (click)="notifyNewActivity(activity.id)"
-                      class="rounded-md border border-gray-300 px-2.5 py-1 font-medium text-gray-600 hover:bg-gray-50"
-                    >
+                    <button type="button" (click)="notifyNewActivity(activity.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 transition-colors hover:bg-gray-50">
                       Notificar
                     </button>
-                    <button
-                      type="button"
-                      (click)="sendDueDateReminder(activity.id)"
-                      class="rounded-md border border-gray-300 px-2.5 py-1 font-medium text-gray-600 hover:bg-gray-50"
-                    >
+                    <button type="button" (click)="sendDueDateReminder(activity.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 transition-colors hover:bg-gray-50">
                       Recordatorio
                     </button>
                   </div>
@@ -381,11 +303,4 @@
     />
   }
 
-  @if (selectedActivity(); as activity) {
-    <app-activity-detail
-      [activity]="activity"
-      [scopeLabel]="scopeLabel(activity.cohortIds)"
-      (closed)="closeActivityDetail()"
-    />
-  }
 </div>

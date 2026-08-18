@@ -19,4 +19,7 @@ export interface ActivityResult {
   cohortIds: string[];
   // Material de apoyo que sube el profesor -- no confundir con las entregas.
   files: ActivityFileResult[];
+  // Solo lo trae GET /activities/{id} (la página standalone) -- los listados por
+  // sección no lo necesitan porque el caller ya conoce el curso por contexto.
+  courseId: string | null;
 }
