@@ -1,0 +1,6 @@
+{
+  "outputDirectory": "dist/studia-front/browser",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
