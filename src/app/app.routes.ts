@@ -28,6 +28,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/register/register').then((m) => m.Register),
   },
   {
+    path: 'forgot-password',
+    canActivate: [guestGuard],
+    loadComponent: () => import('./features/auth/forgot-password/forgot-password').then((m) => m.ForgotPassword),
+  },
+  {
+    path: 'reset-password',
+    canActivate: [guestGuard],
+    loadComponent: () => import('./features/auth/reset-password/reset-password').then((m) => m.ResetPassword),
+  },
+  {
     path: 'profesor',
     canActivate: [authGuard, roleGuard(['Profesor', 'Administrador'])],
     children: [

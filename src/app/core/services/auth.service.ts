@@ -39,6 +39,14 @@ export class AuthService {
     );
   }
 
+  async forgotPassword(email: string): Promise<void> {
+    await firstValueFrom(this.http.post(`${environment.apiUrl}/auth/forgot-password`, { email }));
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    await firstValueFrom(this.http.post(`${environment.apiUrl}/auth/reset-password`, { token, newPassword }));
+  }
+
   async logout(): Promise<void> {
     try {
       await firstValueFrom(this.http.post(`${environment.apiUrl}/auth/logout`, {}));
