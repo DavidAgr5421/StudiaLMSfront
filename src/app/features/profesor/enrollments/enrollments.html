@@ -6,13 +6,13 @@
     Volver al curso
   </a>
 
-  <h1 class="animate-fade-in-up mt-4 text-2xl font-semibold text-gray-900">Inscripciones</h1>
-  <p class="mt-1 text-sm text-gray-500">Quién está inscrito en el curso, quién espera aprobación y a quién querés sumar.</p>
+  <h1 class="animate-fade-in-up mt-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">Inscripciones</h1>
+  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Quién está inscrito en el curso, quién espera aprobación y a quién querés sumar.</p>
 
   <!-- Agregar estudiantes -->
   <div class="card animate-fade-in-up mt-6 p-6" style="animation-delay: 40ms">
-    <h2 class="font-semibold text-gray-900">Agregar estudiantes</h2>
-    <p class="mt-1 text-xs text-gray-500">Buscá por nombre o email y hacé clic para agregarlos a la lista. Quedan inscritos de inmediato.</p>
+    <h2 class="font-semibold text-gray-900 dark:text-gray-100">Agregar estudiantes</h2>
+    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Buscá por nombre o email y hacé clic para agregarlos a la lista. Quedan inscritos de inmediato.</p>
 
     <app-student-picker class="mt-3 block" [excludeIds]="pendingStudentIds()" (picked)="onStudentPicked($event)" />
 
@@ -39,7 +39,7 @@
     }
 
     @if (studentsResultMessage()) {
-      <p class="animate-fade-in-down mt-2 text-xs text-gray-600">{{ studentsResultMessage() }}</p>
+      <p class="animate-fade-in-down mt-2 text-xs text-gray-600 dark:text-gray-400">{{ studentsResultMessage() }}</p>
     }
     @if (studentsErrorMessage()) {
       <p class="animate-fade-in-down mt-2 text-xs text-red-600">{{ studentsErrorMessage() }}</p>
@@ -56,7 +56,7 @@
     <p class="animate-fade-in-down mt-6 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
   } @else {
     <section class="mt-8">
-      <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-500">Pendientes</h2>
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Pendientes</h2>
 
       @if (pending().length === 0) {
         <p class="mt-2 text-sm text-gray-400">No hay solicitudes pendientes.</p>
@@ -64,10 +64,10 @@
 
       <ul class="mt-3 space-y-2">
         @for (enrollment of pending(); track enrollment.id; let i = $index) {
-          <li class="animate-fade-in-up flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm transition-shadow hover:shadow-md" [style.animation-delay.ms]="i * 40">
+          <li class="animate-fade-in-up flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 shadow-sm transition-shadow hover:shadow-md" [style.animation-delay.ms]="i * 40">
             <button type="button" (click)="viewStudent(enrollment.studentId)" class="text-left">
-              <p class="text-sm font-medium text-gray-900 transition-colors hover:text-brand-700 hover:underline">{{ displayName(enrollment) }}</p>
-              <p class="text-xs text-gray-500">Solicitado {{ enrollment.requestedAtUtc | date: 'medium' }}</p>
+              <p class="text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors hover:text-brand-700 hover:underline">{{ displayName(enrollment) }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">Solicitado {{ enrollment.requestedAtUtc | date: 'medium' }}</p>
             </button>
             <div class="flex gap-2">
               <button
@@ -93,7 +93,7 @@
     </section>
 
     <section class="mt-8">
-      <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-500">Estudiantes del curso</h2>
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Estudiantes del curso</h2>
 
       @if (decided().length === 0) {
         <p class="mt-2 text-sm text-gray-400">Todavía no hay inscripciones decididas.</p>
@@ -101,11 +101,11 @@
 
       <ul class="mt-3 space-y-2">
         @for (enrollment of decided(); track enrollment.id) {
-          <li class="flex items-center justify-between rounded-lg border border-gray-100 bg-white px-4 py-3 transition-colors hover:bg-gray-50/60">
-            <button type="button" (click)="viewStudent(enrollment.studentId)" class="text-sm text-gray-700 transition-colors hover:text-brand-700 hover:underline">
+          <li class="flex items-center justify-between rounded-lg border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 transition-colors hover:bg-gray-50/60">
+            <button type="button" (click)="viewStudent(enrollment.studentId)" class="text-sm text-gray-700 dark:text-gray-300 transition-colors hover:text-brand-700 hover:underline">
               {{ displayName(enrollment) }}
             </button>
-            <span class="badge" [class]="enrollment.status === 'Aprobada' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500'">
+            <span class="badge" [class]="enrollment.status === 'Aprobada' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500 dark:text-gray-400'">
               {{ enrollment.status }}
             </span>
           </li>

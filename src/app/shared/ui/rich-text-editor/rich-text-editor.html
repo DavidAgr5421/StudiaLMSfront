@@ -1,5 +1,5 @@
-<div class="overflow-hidden rounded-md border border-gray-300" [class.opacity-60]="isDisabled()">
-  <div class="flex flex-wrap items-center gap-1 border-b border-gray-200 bg-gray-50 px-2 py-1">
+<div class="overflow-hidden rounded-md border border-gray-300 dark:border-gray-700" [class.opacity-60]="isDisabled()">
+  <div class="flex flex-wrap items-center gap-1 border-b border-gray-200 bg-gray-50 px-2 py-1 dark:border-gray-800 dark:bg-gray-800">
     @if (!isSourceMode()) {
       <button
         type="button"
@@ -7,7 +7,7 @@
         (mousedown)="$event.preventDefault()"
         (click)="exec('bold')"
         title="Negrita"
-        class="rounded px-2 py-1 text-xs font-bold text-gray-700 hover:bg-gray-200"
+        class="rounded px-2 py-1 text-xs font-bold text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
       >
         N
       </button>
@@ -17,7 +17,7 @@
         (mousedown)="$event.preventDefault()"
         (click)="exec('italic')"
         title="Cursiva"
-        class="rounded px-2 py-1 text-xs italic text-gray-700 hover:bg-gray-200"
+        class="rounded px-2 py-1 text-xs italic text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
       >
         K
       </button>
@@ -30,7 +30,7 @@
         (mousedown)="$event.preventDefault()"
         (click)="exec('justifyLeft')"
         title="Alinear a la izquierda"
-        class="rounded px-2 py-1 text-xs text-gray-700 hover:bg-gray-200"
+        class="rounded px-2 py-1 text-xs text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
       >
         ⟸
       </button>
@@ -40,7 +40,7 @@
         (mousedown)="$event.preventDefault()"
         (click)="exec('justifyCenter')"
         title="Centrar"
-        class="rounded px-2 py-1 text-xs text-gray-700 hover:bg-gray-200"
+        class="rounded px-2 py-1 text-xs text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
       >
         ⟺
       </button>
@@ -50,7 +50,7 @@
         (mousedown)="$event.preventDefault()"
         (click)="exec('justifyRight')"
         title="Alinear a la derecha"
-        class="rounded px-2 py-1 text-xs text-gray-700 hover:bg-gray-200"
+        class="rounded px-2 py-1 text-xs text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
       >
         ⟹
       </button>
@@ -63,7 +63,7 @@
           [disabled]="isDisabled()"
           (mousedown)="$event.preventDefault()"
           (click)="setFormatBlock(format.tag)"
-          class="rounded px-2 py-1 text-xs text-gray-700 hover:bg-gray-200"
+          class="rounded px-2 py-1 text-xs text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
         >
           {{ format.label }}
         </button>
@@ -75,7 +75,7 @@
     <button
       type="button"
       (click)="toggleSourceMode()"
-      [class]="isSourceMode() ? 'rounded bg-gray-700 px-2 py-1 text-xs font-medium text-white' : 'rounded px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-200'"
+      [class]="isSourceMode() ? 'rounded bg-gray-700 px-2 py-1 text-xs font-medium text-white' : 'rounded px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'"
       title="Ver/editar el código HTML"
     >
       &lt;/&gt; HTML
@@ -89,12 +89,12 @@
       [disabled]="isDisabled()"
       rows="6"
       spellcheck="false"
-      class="block w-full resize-y bg-white px-3 py-2 font-mono text-xs text-gray-800 focus:outline-none"
+      class="block w-full resize-y bg-white px-3 py-2 font-mono text-xs text-gray-800 focus:outline-none dark:bg-gray-900 dark:text-gray-200"
     ></textarea>
   } @else {
     <div
       #editable
-      class="prose prose-sm min-h-[120px] max-w-none px-3 py-2 text-sm text-gray-900 focus:outline-none"
+      class="prose prose-sm dark:prose-invert min-h-[120px] max-w-none px-3 py-2 text-sm text-gray-900 focus:outline-none dark:text-gray-100"
       [attr.contenteditable]="!isDisabled()"
       (input)="onEditableInput()"
     ></div>

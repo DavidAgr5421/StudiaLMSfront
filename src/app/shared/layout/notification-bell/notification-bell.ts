@@ -1,7 +1,7 @@
 import { Component, DestroyRef, ElementRef, HostListener, inject, signal, computed } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { interval, startWith, switchMap } from 'rxjs';
+import { interval, of, startWith, switchMap, catchError } from 'rxjs';
 import { NotificationService } from '../../../core/services/notification.service';
 import { NotificationResult } from '../../../core/models/notification.model';
 
@@ -26,7 +26,7 @@ export class NotificationBell {
     interval(POLL_INTERVAL_MS)
       .pipe(
         startWith(0),
-        switchMap(() => this.notificationService.getMine()),
+        switchMap(() => this.notificationService.getMine().pipe(catchError(() => of([])))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((notifications) => this.notifications.set(notifications));

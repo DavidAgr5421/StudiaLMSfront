@@ -1,15 +1,15 @@
 <div class="mx-auto max-w-5xl px-4 py-8">
   <div class="animate-fade-in-up flex flex-wrap items-start justify-between gap-4">
     <div>
-      <h1 class="text-2xl font-semibold text-gray-900">Mis cursos</h1>
-      <p class="mt-1 text-sm text-gray-500">Cursos en los que estás inscrito.</p>
+      <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">Mis cursos</h1>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Cursos en los que estás inscrito.</p>
     </div>
   </div>
 
   <!-- Unirse con código de invitación -->
   <div class="card animate-fade-in-up mt-6 p-6" style="animation-delay: 40ms">
-    <h2 class="font-semibold text-gray-900">Unirme con un código</h2>
-    <p class="mt-1 text-xs text-gray-500">
+    <h2 class="font-semibold text-gray-900 dark:text-gray-100">Unirme con un código</h2>
+    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
       Pedile el código de invitación a tu profesor -- te une al curso al instante, sin importar el modo de inscripción.
     </p>
 
@@ -73,13 +73,13 @@
   } @else if (errorMessage()) {
     <p class="animate-fade-in-down mt-8 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
   } @else if (enrolledCourses().length === 0) {
-    <div class="animate-fade-in-up mt-8 rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center">
+    <div class="animate-fade-in-up mt-8 rounded-xl border border-dashed border-gray-300 bg-white dark:bg-gray-900 p-10 text-center">
       <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-50">
         <svg class="h-6 w-6 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
         </svg>
       </div>
-      <p class="mt-3 text-sm text-gray-500">Todavía no estás inscrito en ningún curso.</p>
+      <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">Todavía no estás inscrito en ningún curso.</p>
       <p class="mt-1 text-xs text-gray-400">
         Pedile a tu profesor el código de invitación o que te agregue al curso.
       </p>
@@ -102,18 +102,18 @@
             </div>
             <div class="p-5">
               <div class="flex items-start justify-between gap-2">
-                <h2 class="font-semibold text-gray-900 transition-colors group-hover:text-brand-700">
+                <h2 class="font-semibold text-gray-900 dark:text-gray-100 transition-colors group-hover:text-brand-700">
                   {{ item.course.name }}
                 </h2>
                 <span
                   class="badge"
-                  [class]="item.course.status === 'Activo' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500'"
+                  [class]="item.course.status === 'Activo' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500 dark:text-gray-400'"
                 >
                   {{ item.course.status }}
                 </span>
               </div>
               @if (item.course.profesorName) {
-                <p class="mt-2 text-xs text-gray-500">Profesor: {{ item.course.profesorName }}</p>
+                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Profesor: {{ item.course.profesorName }}</p>
               }
               <p class="mt-3 flex items-center gap-1 text-xs font-medium text-brand-600 opacity-0 transition-opacity group-hover:opacity-100">
                 Entrar al curso →

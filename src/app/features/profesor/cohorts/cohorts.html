@@ -6,10 +6,10 @@
     Volver al curso
   </a>
 
-  <h1 class="animate-fade-in-up mt-4 text-2xl font-semibold text-gray-900">Fichas</h1>
-  <p class="mt-1 text-sm text-gray-500">Fichas de este curso.</p>
+  <h1 class="animate-fade-in-up mt-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">Fichas</h1>
+  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Fichas de este curso.</p>
 
-  <form [formGroup]="cohortForm" (ngSubmit)="createCohort()" class="animate-fade-in-up mt-6 flex gap-2 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+  <form [formGroup]="cohortForm" (ngSubmit)="createCohort()" class="animate-fade-in-up mt-6 flex gap-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5 shadow-sm">
     <input type="text" formControlName="name" placeholder="Nombre de la ficha (ej. ADSO-2601)" class="input-field flex-1" />
     <button type="submit" class="btn-primary shrink-0">Crear ficha</button>
   </form>
@@ -28,7 +28,7 @@
       }
     </div>
   } @else if (cohorts().length === 0) {
-    <div class="animate-fade-in-up mt-6 rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
+    <div class="animate-fade-in-up mt-6 rounded-xl border border-dashed border-gray-300 bg-white dark:bg-gray-900 p-8 text-center">
       <p class="text-sm text-gray-400">Todavía no creaste ninguna ficha en este curso.</p>
     </div>
   }
@@ -37,7 +37,7 @@
     @for (cohort of cohorts(); track cohort.id; let i = $index) {
       <li class="animate-fade-in-up card p-5" [style.animation-delay.ms]="i * 50">
         <div class="flex items-center gap-2">
-          <h2 class="font-semibold text-gray-900">{{ cohort.name }}</h2>
+          <h2 class="font-semibold text-gray-900 dark:text-gray-100">{{ cohort.name }}</h2>
           <span class="badge bg-brand-50 text-brand-700">{{ cohort.studentIds.length }} estudiante(s)</span>
         </div>
 

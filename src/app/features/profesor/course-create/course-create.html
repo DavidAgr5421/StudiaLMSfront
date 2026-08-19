@@ -6,13 +6,13 @@
     Volver a mis cursos
   </a>
 
-  <div class="animate-fade-in-up relative mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+  <div class="animate-fade-in-up relative mt-4 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-8 shadow-sm">
     <div class="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-brand-600 via-brand-500 to-brand-300"></div>
-    <h1 class="text-xl font-semibold text-gray-900">Nuevo curso</h1>
+    <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Nuevo curso</h1>
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="mt-6 space-y-4">
       <div>
-        <label for="name" class="block text-sm font-medium text-gray-700">Nombre del curso</label>
+        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre del curso</label>
         <input id="name" type="text" formControlName="name" class="input-field mt-1" />
         @if (form.controls.name.invalid && form.controls.name.touched) {
           <p class="animate-fade-in-down mt-1 text-xs text-red-600">El nombre es obligatorio (máximo 150 caracteres).</p>
@@ -20,7 +20,7 @@
       </div>
 
       <div>
-        <label for="enrollmentMode" class="block text-sm font-medium text-gray-700">Modo de inscripción</label>
+        <label for="enrollmentMode" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Modo de inscripción</label>
         <select id="enrollmentMode" formControlName="enrollmentMode" class="input-field mt-1">
           @for (mode of enrollmentModes; track mode) {
             <option [value]="mode">{{ mode }}</option>
