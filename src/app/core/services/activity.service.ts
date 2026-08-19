@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ActivityResult, ActivityStatus, ActivityType } from '../models/activity.model';
+import { ActivityKind, ActivityResult, ActivityStatus, ActivityType } from '../models/activity.model';
 import { SubmissionResult } from '../models/submission.model';
 
 export interface CreateActivityParams {
@@ -15,6 +15,9 @@ export interface CreateActivityParams {
   cohortIds: string[];
   files: File[];
   status?: ActivityStatus;
+  kind?: ActivityKind;
+  openDateUtc?: string | null;
+  allowsLateSubmission?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -37,6 +40,11 @@ export class ActivityService {
     for (const cohortId of params.cohortIds) formData.append('cohortIds', cohortId);
     for (const file of params.files) formData.append('files', file, file.name);
     if (params.status) formData.append('status', params.status);
+    if (params.kind) formData.append('kind', params.kind);
+    if (params.openDateUtc) formData.append('openDateUtc', params.openDateUtc);
+    if (params.allowsLateSubmission !== undefined) {
+      formData.append('allowsLateSubmission', String(params.allowsLateSubmission));
+    }
 
     return this.http.post<ActivityResult>(this.baseUrl, formData);
   }

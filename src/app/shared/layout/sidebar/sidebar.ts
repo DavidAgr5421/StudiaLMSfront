@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
@@ -19,7 +19,7 @@ interface EnrolledCourse {
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, NgTemplateOutlet],
+  imports: [RouterLink, RouterLinkActive, NgTemplateOutlet],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })

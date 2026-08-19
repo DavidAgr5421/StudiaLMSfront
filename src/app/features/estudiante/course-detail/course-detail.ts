@@ -5,7 +5,7 @@ import { CourseService } from '../../../core/services/course.service';
 import { SectionService } from '../../../core/services/section.service';
 import { CourseResult } from '../../../core/models/course.model';
 import { SectionResult } from '../../../core/models/section.model';
-import { ActivityResult } from '../../../core/models/activity.model';
+import { ACTIVITY_KIND_ICONS, ACTIVITY_KIND_LABELS, ActivityResult } from '../../../core/models/activity.model';
 
 @Component({
   selector: 'app-estudiante-course-detail',
@@ -31,6 +31,9 @@ export class EstudianteCourseDetail {
   protected readonly activitiesBySection = signal<Record<string, ActivityResult[]>>({});
   protected readonly loadingActivitiesForSectionId = signal<string | null>(null);
   protected readonly expandedSectionId = signal<string | null>(null);
+
+  protected readonly activityKindIcons = ACTIVITY_KIND_ICONS;
+  protected readonly activityKindLabels = ACTIVITY_KIND_LABELS;
 
   constructor() {
     this.loadCourse();

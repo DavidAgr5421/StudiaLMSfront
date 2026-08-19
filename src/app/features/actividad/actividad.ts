@@ -1,13 +1,13 @@
 import { Component, OnDestroy, inject, signal } from '@angular/core';
 import { DatePipe, Location, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AuthService } from '../../core/services/auth.service';
 import { ActivityService } from '../../core/services/activity.service';
 import { SubmissionService } from '../../core/services/submission.service';
 import { CohortService } from '../../core/services/cohort.service';
-import { ActivityFileResult, ActivityResult } from '../../core/models/activity.model';
+import { ACTIVITY_KIND_ICONS, ACTIVITY_KIND_LABELS, ActivityFileResult, ActivityResult } from '../../core/models/activity.model';
 import { SubmissionResult } from '../../core/models/submission.model';
 import { RichTextEditor } from '../../shared/ui/rich-text-editor/rich-text-editor';
 
@@ -33,7 +33,7 @@ function previewKind(fileName: string): FilePreviewKind | null {
 
 @Component({
   selector: 'app-actividad',
-  imports: [DatePipe, FormsModule, RichTextEditor, NgTemplateOutlet],
+  imports: [DatePipe, FormsModule, RichTextEditor, NgTemplateOutlet, RouterLink],
   templateUrl: './actividad.html',
   styleUrl: './actividad.css',
 })
@@ -53,8 +53,11 @@ export class Actividad implements OnDestroy {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly scopeLabel = signal('Global');
 
+  protected readonly activityKindIcons = ACTIVITY_KIND_ICONS;
+  protected readonly activityKindLabels = ACTIVITY_KIND_LABELS;
+
   protected readonly isStudent = () => this.authService.role() === 'Estudiante';
-  private readonly isProfesor = () => {
+  protected readonly isProfesor = () => {
     const role = this.authService.role();
     return role === 'Profesor' || role === 'Administrador';
   };
@@ -79,7 +82,35 @@ export class Actividad implements OnDestroy {
     const submission = this.mySubmission();
     const activity = this.activity();
     if (!submission || !activity) return false;
-    return new Date(activity.dueDateUtc).getTime() > Date.now();
+    return activity.acceptsSubmissions;
+  }
+
+  // "Entregado" / "Sin entregar" / "Tarde para entregar" / "Bloqueada" -- ver spec de
+  // Estado de la Entrega. No hay estado "Calificado" acá, eso es aparte (gradeStateLabel).
+  protected submissionStateLabel(activity: ActivityResult, submission: SubmissionResult | null): string {
+    if (!submission) return activity.acceptsSubmissions ? 'Sin entregar' : 'Bloqueada';
+    return submission.status === 'Tardia' ? 'Entregado tarde' : 'Entregado a tiempo';
+  }
+
+  protected gradeStateLabel(submission: SubmissionResult): string {
+    return submission.score !== null ? 'Calificado' : 'Sin calificar';
+  }
+
+  // Cuenta regresiva/estado de la fecha límite -- estática al cargar la página, igual que
+  // isOverdue() en el listado de cursos (no hace falta que "tickee" en vivo).
+  protected timeRemainingLabel(activity: ActivityResult): string {
+    if (activity.isManuallyClosed) return 'Cerrada por el profesor';
+
+    const msRemaining = new Date(activity.dueDateUtc).getTime() - Date.now();
+    if (msRemaining <= 0) {
+      return activity.allowsLateSubmission ? 'Vencida (todavía acepta entregas tardías)' : 'Vencida (ya no acepta entregas)';
+    }
+
+    const hours = Math.floor(msRemaining / (1000 * 60 * 60));
+    const days = Math.floor(hours / 24);
+    if (days >= 1) return `Quedan ${days} día(s)`;
+    if (hours >= 1) return `Quedan ${hours} hora(s)`;
+    return 'Quedan menos de 1 hora';
   }
 
   constructor() {

@@ -1,5 +1,5 @@
 <div class="flex h-screen flex-col">
-  <header class="sticky top-0 z-30 overflow-hidden bg-gradient-to-r from-brand-700 via-brand-600 to-brand-500 text-white shadow-md">
+  <header class="sticky top-0 z-30 bg-gradient-to-r from-brand-700 via-brand-600 to-brand-500 text-white shadow-md dark:from-brand-900 dark:via-brand-800 dark:to-brand-700">
     <!-- Decoración: blobs difusos flotando detrás del contenido -->
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
       <div class="animate-float-blob absolute -left-10 -top-16 h-40 w-40 rounded-full bg-white/10 blur-2xl"></div>
@@ -138,10 +138,10 @@
     @if (auth.isLoggedIn()) {
       <!-- Sidebar de escritorio: colapsa su ancho con transición -->
       <div
-        class="hidden overflow-hidden transition-[width] duration-300 ease-in-out md:block"
+        class="hidden h-full overflow-hidden transition-[width] duration-300 ease-in-out md:block"
         [style.width.px]="isSidebarOpen() ? 256 : 0"
       >
-        <app-sidebar class="block w-64" />
+        <app-sidebar class="block h-full w-64" />
       </div>
 
       <!-- Drawer móvil: overlay + panel deslizante -->

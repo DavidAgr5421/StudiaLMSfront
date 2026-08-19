@@ -9,8 +9,16 @@ import { CohortService } from '../../../core/services/cohort.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { CourseResult } from '../../../core/models/course.model';
 import { SectionResult } from '../../../core/models/section.model';
-import { ActivityResult, ActivityType } from '../../../core/models/activity.model';
+import {
+  ACTIVITY_KIND_ICONS,
+  ACTIVITY_KIND_LABELS,
+  ACTIVITY_KINDS_CREATABLE,
+  ActivityKind,
+  ActivityResult,
+  ActivityType,
+} from '../../../core/models/activity.model';
 import { CohortResult } from '../../../core/models/cohort.model';
+import { UserResult } from '../../../core/models/user.model';
 import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog';
 import { RichTextEditor } from '../../../shared/ui/rich-text-editor/rich-text-editor';
 
@@ -52,6 +60,13 @@ export class CourseDetail {
   protected readonly activityFiles = signal<File[]>([]);
   protected readonly activityFilesErrorMessage = signal<string | null>(null);
 
+  // Roster del curso (solo Aprobada) -- alimenta la vista previa de grupos cuando la
+  // actividad es Grupal, igual que el buscador de cada ficha en la página "Fichas".
+  protected readonly courseStudents = signal<UserResult[]>([]);
+  protected readonly isCohortDropdownOpen = signal(false);
+  protected readonly isGroupPreviewOpen = signal(false);
+  protected readonly groupPreviewMode = signal<'porGrupo' | 'porEstudiante'>('porGrupo');
+
   protected readonly isDeletingCourse = signal(false);
   protected readonly showDeleteCourseConfirm = signal(false);
   protected readonly deleteCourseErrorMessage = signal<string | null>(null);
@@ -61,6 +76,9 @@ export class CourseDetail {
   protected readonly deleteSectionErrorMessage = signal<string | null>(null);
 
   protected readonly activityTypes: ActivityType[] = ['SoloTexto', 'ConArchivo'];
+  protected readonly activityKinds: ActivityKind[] = ACTIVITY_KINDS_CREATABLE;
+  protected readonly activityKindIcons = ACTIVITY_KIND_ICONS;
+  protected readonly activityKindLabels = ACTIVITY_KIND_LABELS;
 
   protected readonly sectionForm = this.fb.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(150)]],
@@ -72,8 +90,11 @@ export class CourseDetail {
     title: ['', [Validators.required, Validators.maxLength(150)]],
     description: [''],
     dueDate: ['', Validators.required],
+    openDate: [''],
     type: ['SoloTexto' as ActivityType, Validators.required],
+    kind: ['Individual' as ActivityKind, Validators.required],
     maxFiles: [1],
+    allowsLateSubmission: [true],
     isHidden: [false],
   });
 
@@ -81,6 +102,7 @@ export class CourseDetail {
     this.loadCourse();
     this.loadSections();
     this.loadCohorts();
+    this.loadCourseStudents();
   }
 
   private loadCourse(): void {
@@ -93,6 +115,23 @@ export class CourseDetail {
 
   private loadCohorts(): void {
     this.cohortService.getByCourse(this.courseId).subscribe((cohorts) => this.cohorts.set(cohorts));
+  }
+
+  private loadCourseStudents(): void {
+    this.courseService.getEnrollments(this.courseId).subscribe((enrollments) => {
+      this.courseStudents.set(
+        enrollments
+          .filter((enrollment) => enrollment.status === 'Aprobada')
+          .map((enrollment) => ({
+            id: enrollment.studentId,
+            name: enrollment.studentName,
+            email: enrollment.studentEmail ?? '',
+            role: 'Estudiante' as const,
+            typeId: null,
+            valueId: null,
+          })),
+      );
+    });
   }
 
   toggleSection(sectionId: string): void {
@@ -115,6 +154,51 @@ export class CourseDetail {
 
   toggleActivityCohort(cohortId: string): void {
     this.activityCohortIds.update((current) => toggleInSet(current, cohortId));
+  }
+
+  toggleCohortDropdown(): void {
+    this.isCohortDropdownOpen.update((open) => !open);
+  }
+
+  toggleActivityHidden(): void {
+    const control = this.activityForm.controls.isHidden;
+    control.setValue(!control.value);
+  }
+
+  toggleGroupPreview(): void {
+    this.isGroupPreviewOpen.update((open) => !open);
+  }
+
+  cohortDropdownSummary(): string {
+    const count = this.activityCohortIds().size;
+    if (count === 0) return 'Global';
+    if (count === this.cohorts().length) return 'Todas las fichas';
+    return `${count} ficha(s)`;
+  }
+
+  // Vista previa de grupos para actividades Grupales -- puramente informativa, la
+  // membresía real de cada ficha se administra en la página "Fichas" del curso.
+  groupPreviewByCohort(): { cohort: CohortResult; students: UserResult[] }[] {
+    const selectedCohorts = this.cohorts().filter((cohort) => this.activityCohortIds().has(cohort.id));
+    return selectedCohorts.map((cohort) => ({
+      cohort,
+      students: this.courseStudents().filter((student) => cohort.studentIds.includes(student.id)),
+    }));
+  }
+
+  groupPreviewUnassignedStudents(): UserResult[] {
+    const selectedCohorts = this.cohorts().filter((cohort) => this.activityCohortIds().has(cohort.id));
+    return this.courseStudents().filter(
+      (student) => !selectedCohorts.some((cohort) => cohort.studentIds.includes(student.id)),
+    );
+  }
+
+  groupPreviewByStudent(): { student: UserResult; cohortNames: string[] }[] {
+    const selectedCohorts = this.cohorts().filter((cohort) => this.activityCohortIds().has(cohort.id));
+    return this.courseStudents().map((student) => ({
+      student,
+      cohortNames: selectedCohorts.filter((cohort) => cohort.studentIds.includes(student.id)).map((cohort) => cohort.name),
+    }));
   }
 
   submitSection(): void {
@@ -141,9 +225,22 @@ export class CourseDetail {
   startAddingActivity(sectionId: string): void {
     this.activityErrorMessage.set(null);
     this.activityFilesErrorMessage.set(null);
-    this.activityForm.reset({ title: '', description: '', dueDate: '', type: 'SoloTexto', maxFiles: 1, isHidden: false });
+    this.activityForm.reset({
+      title: '',
+      description: '',
+      dueDate: '',
+      openDate: '',
+      type: 'SoloTexto',
+      kind: 'Individual',
+      maxFiles: 1,
+      allowsLateSubmission: true,
+      isHidden: false,
+    });
     this.activityCohortIds.set(new Set());
     this.activityFiles.set([]);
+    this.isCohortDropdownOpen.set(false);
+    this.isGroupPreviewOpen.set(false);
+    this.groupPreviewMode.set('porGrupo');
     this.addingActivityForSectionId.set(sectionId);
   }
 
@@ -175,8 +272,16 @@ export class CourseDetail {
     }
 
     this.activityErrorMessage.set(null);
-    const { title, description, dueDate, type, maxFiles, isHidden } = this.activityForm.getRawValue();
+    const { title, description, dueDate, openDate, type, kind, maxFiles, allowsLateSubmission, isHidden } =
+      this.activityForm.getRawValue();
+
+    if (kind === 'Grupal' && this.activityCohortIds().size === 0) {
+      this.activityErrorMessage.set('Una actividad Grupal necesita al menos una ficha seleccionada como grupo.');
+      return;
+    }
+
     const dueDateUtc = new Date(dueDate).toISOString();
+    const openDateUtc = openDate ? new Date(openDate).toISOString() : null;
 
     this.activityService
       .create({
@@ -184,7 +289,10 @@ export class CourseDetail {
         title,
         description,
         dueDateUtc,
+        openDateUtc,
         type,
+        kind,
+        allowsLateSubmission,
         maxFiles: type === 'ConArchivo' ? maxFiles : null,
         cohortIds: [...this.activityCohortIds()],
         files: this.activityFiles(),

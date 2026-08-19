@@ -100,6 +100,14 @@
             @if (isExpanded('c:' + course.id)) {
               <div class="animate-fade-in-up ml-3 space-y-0.5 border-l border-brand-100 py-1 pl-2">
                 <a
+                  [routerLink]="['/profesor/cursos', course.id]"
+                  routerLinkActive="bg-brand-50 text-brand-700"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  class="block rounded-md px-2 py-1 text-sm text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700 dark:text-gray-400 dark:hover:bg-gray-800"
+                >
+                  Curso
+                </a>
+                <a
                   [routerLink]="['/profesor/cursos', course.id, 'inscripciones']"
                   routerLinkActive="bg-brand-50 text-brand-700"
                   class="block rounded-md px-2 py-1 text-sm text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700 dark:text-gray-400 dark:hover:bg-gray-800"

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -29,6 +29,35 @@ export class ActivitySubmissions {
 
   protected readonly selectedStudentId = signal<string | null>(null);
   protected readonly downloadingKey = signal<string | null>(null);
+
+  // Búsqueda/filtros: puramente en memoria, la lista de entregas de una actividad no
+  // amerita paginar ni pegarle al backend de nuevo por esto.
+  protected readonly searchQuery = signal('');
+  protected readonly statusFilter = signal<'all' | 'ATiempo' | 'Tardia'>('all');
+  protected readonly groupFilter = signal('all');
+
+  // Solo tiene opciones en actividades Grupales (ahí sí cada entrega trae groupName) --
+  // en Individual queda vacío y el filtro de grupo ni se muestra.
+  protected readonly availableGroups = computed(() => {
+    const names = new Set(this.submissions().map((s) => s.groupName).filter((name) => !!name));
+    return [...names].sort();
+  });
+
+  protected readonly filteredSubmissions = computed(() => {
+    const query = this.searchQuery().trim().toLowerCase();
+    const status = this.statusFilter();
+    const group = this.groupFilter();
+
+    return this.submissions().filter((submission) => {
+      if (status !== 'all' && submission.status !== status) return false;
+      if (group !== 'all' && submission.groupName !== group) return false;
+      if (query) {
+        const name = (submission.studentName ?? submission.studentId).toLowerCase();
+        if (!name.includes(query)) return false;
+      }
+      return true;
+    });
+  });
 
   constructor() {
     this.load();

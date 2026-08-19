@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, input, output, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Observable, Subject, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
@@ -18,7 +18,7 @@ export class StudentPicker {
 
   // Ids a excluir de los resultados (por ejemplo, estudiantes ya elegidos por el padre).
   excludeIds = input<ReadonlySet<string>>(new Set());
-  placeholder = input('Buscar por nombre o email…');
+  placeholder = input('Buscar por nombre, email o cédula…');
 
   // Si se provee, la búsqueda filtra esta lista en memoria en vez de pegarle a
   // GET /api/users/search -- para acotar el buscador a un grupo ya conocido
@@ -34,13 +34,24 @@ export class StudentPicker {
   private readonly queryChanges = new Subject<string>();
 
   constructor() {
+    // Sin texto todavía escrito, mostramos directamente el roster (candidates) en vez de
+    // una lista vacía -- así el profesor ve de una a quién puede asignar, sin tener que
+    // adivinar un nombre para arrancar. Reacciona también si candidates() llega después
+    // (carga async del roster del curso) mientras el buscador sigue vacío.
+    effect(() => {
+      const candidates = this.candidates();
+      if (candidates && !this.query().trim()) {
+        this.results.set(this.applyExclusions(candidates));
+      }
+    });
+
     this.queryChanges
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
         switchMap((query) => {
           const trimmed = query.trim();
-          if (!trimmed) return of([]);
+          if (!trimmed) return of(this.candidates() ?? []);
 
           this.isSearching.set(true);
           return this.search(trimmed);
@@ -48,10 +59,14 @@ export class StudentPicker {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((users) => {
-        const excluded = this.excludeIds();
-        this.results.set(users.filter((u) => u.role === 'Estudiante' && !excluded.has(u.id)));
+        this.results.set(this.applyExclusions(users));
         this.isSearching.set(false);
       });
+  }
+
+  private applyExclusions(users: UserResult[]): UserResult[] {
+    const excluded = this.excludeIds();
+    return users.filter((u) => u.role === 'Estudiante' && !excluded.has(u.id));
   }
 
   private search(query: string): Observable<UserResult[]> {
@@ -61,7 +76,10 @@ export class StudentPicker {
     const needle = query.toLowerCase();
     return of(
       candidates.filter(
-        (u) => (u.name?.toLowerCase().includes(needle) ?? false) || u.email.toLowerCase().includes(needle),
+        (u) =>
+          (u.name?.toLowerCase().includes(needle) ?? false) ||
+          u.email.toLowerCase().includes(needle) ||
+          (u.valueId?.toLowerCase().includes(needle) ?? false),
       ),
     );
   }
@@ -69,8 +87,9 @@ export class StudentPicker {
   onQueryChange(value: string): void {
     this.query.set(value);
     if (!value.trim()) {
-      this.results.set([]);
+      this.results.set(this.applyExclusions(this.candidates() ?? []));
       this.isSearching.set(false);
+      return;
     }
     this.queryChanges.next(value);
   }

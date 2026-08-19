@@ -15,17 +15,17 @@
   }
 
   @if (results().length > 0) {
-    <ul class="animate-fade-in-down absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+    <ul class="animate-fade-in-down absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-900">
       @for (user of results(); track user.id) {
         <li>
           <button
             type="button"
             (click)="pick(user)"
-            class="flex w-full flex-col items-start px-3 py-2 text-left text-sm transition-colors hover:bg-brand-50"
+            class="flex w-full flex-col items-start px-3 py-2 text-left text-sm transition-colors hover:bg-brand-50 dark:hover:bg-brand-950/40"
           >
-            <span class="font-medium text-gray-900">{{ user.name || user.email }}</span>
+            <span class="font-medium text-gray-900 dark:text-gray-100">{{ user.name || user.email }}</span>
             @if (user.name) {
-              <span class="text-xs text-gray-500">{{ user.email }}</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">{{ user.email }}</span>
             }
           </button>
         </li>

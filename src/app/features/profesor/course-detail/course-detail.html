@@ -7,12 +7,12 @@
   </a>
 
   @if (course(); as c) {
-    <div class="animate-fade-in-up relative mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <div class="animate-fade-in-up relative mt-4 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 shadow-sm">
       <div class="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-brand-600 via-brand-500 to-brand-300"></div>
       <div class="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 class="text-2xl font-semibold text-gray-900">{{ c.name }}</h1>
-          <p class="mt-1 text-sm text-gray-500">
+          <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{{ c.name }}</h1>
+          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
             {{ c.status }} · Inscripción {{ c.enrollmentMode }} · Código:
             <span class="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-xs">{{ c.invitationCode }}</span>
           </p>
@@ -50,7 +50,7 @@
 
   <!-- Secciones -->
   <div class="mt-6 flex items-center justify-between">
-    <h2 class="text-lg font-semibold text-gray-900">Secciones</h2>
+    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Secciones</h2>
     <button type="button" (click)="isAddingSection.set(!isAddingSection())" class="btn-secondary">
       @if (!isAddingSection()) {
         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -62,18 +62,18 @@
   </div>
 
   @if (isAddingSection()) {
-    <form [formGroup]="sectionForm" (ngSubmit)="submitSection()" class="animate-fade-in-up mt-3 space-y-3 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <form [formGroup]="sectionForm" (ngSubmit)="submitSection()" class="animate-fade-in-up mt-3 space-y-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5 shadow-sm">
       <div>
-        <label class="block text-sm font-medium text-gray-700">Título</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Título</label>
         <input type="text" formControlName="title" class="input-field mt-1" />
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700">Descripción</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descripción</label>
         <app-rich-text-editor formControlName="descriptionHtml" class="mt-1 block" />
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700">Alcance</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Alcance</label>
         <p class="mt-1 text-xs text-gray-400">
           Sin marcar ninguna ficha, la sección es global (visible para todo el curso).
         </p>
@@ -82,7 +82,7 @@
         } @else {
           <div class="mt-2 flex flex-wrap gap-3">
             @for (cohort of cohorts(); track cohort.id) {
-              <label class="flex items-center gap-1.5 text-sm text-gray-700">
+              <label class="flex items-center gap-1.5 text-sm text-gray-700 dark:text-gray-300">
                 <input
                   type="checkbox"
                   [checked]="sectionCohortIds().has(cohort.id)"
@@ -96,7 +96,7 @@
         }
       </div>
 
-      <label class="flex items-center gap-1.5 text-sm text-gray-700">
+      <label class="flex items-center gap-1.5 text-sm text-gray-700 dark:text-gray-300">
         <input type="checkbox" formControlName="isHidden" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
         Ocultar (solo vos la ves; no notifica a nadie hasta que la publiques)
       </label>
@@ -109,16 +109,16 @@
   }
 
   @if (sections().length === 0) {
-    <p class="mt-4 text-sm text-gray-500">Todavía no hay secciones en este curso.</p>
+    <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">Todavía no hay secciones en este curso.</p>
   }
 
   <ul class="mt-4 space-y-3">
     @for (section of sections(); track section.id; let i = $index) {
-      <li class="animate-fade-in-up overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-200 hover:shadow-md" [style.animation-delay.ms]="i * 40">
+      <li class="animate-fade-in-up overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm transition-shadow duration-200 hover:shadow-md" [style.animation-delay.ms]="i * 40">
         <div class="flex w-full items-center justify-between px-5 py-4">
           <button type="button" (click)="toggleSection(section.id)" class="flex flex-1 items-center gap-2 text-left">
-            <span class="font-medium text-gray-900">{{ section.title }}</span>
-            <span class="badge bg-gray-100 text-gray-500">{{ scopeLabel(section.cohortIds) }}</span>
+            <span class="font-medium text-gray-900 dark:text-gray-100">{{ section.title }}</span>
+            <span class="badge bg-gray-100 text-gray-500 dark:text-gray-400">{{ scopeLabel(section.cohortIds) }}</span>
             @if (section.status === 'Oculto') {
               <span class="badge bg-amber-50 text-amber-700">Oculto</span>
             }
@@ -143,14 +143,14 @@
         </div>
 
         @if (expandedSectionId() === section.id) {
-          <div class="animate-fade-in-up border-t border-gray-100 px-5 py-4">
+          <div class="animate-fade-in-up border-t border-gray-100 dark:border-gray-800 px-5 py-4">
             @if (section.descriptionHtml) {
-              <div class="prose prose-sm max-w-none text-gray-600" [innerHTML]="section.descriptionHtml"></div>
+              <div class="prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-gray-400" [innerHTML]="section.descriptionHtml"></div>
             }
 
             <div class="mt-3 flex gap-2">
               @if (section.status !== 'Oculto') {
-                <button type="button" (click)="notifyNewSection(section.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50">
+                <button type="button" (click)="notifyNewSection(section.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 transition-colors hover:bg-gray-50">
                   Notificar nueva sección
                 </button>
               }
@@ -160,65 +160,222 @@
             </div>
 
             @if (addingActivityForSectionId() === section.id) {
-              <form [formGroup]="activityForm" (ngSubmit)="submitActivity(section.id)" class="animate-fade-in-up mt-4 space-y-3 rounded-lg bg-gray-50 p-4">
+              <form [formGroup]="activityForm" (ngSubmit)="submitActivity(section.id)" class="animate-fade-in-up mt-4 space-y-3 rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
                 <div>
-                  <label class="block text-xs font-medium text-gray-700">Título</label>
-                  <input type="text" formControlName="title" class="input-field mt-1" />
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-700">Descripción</label>
-                  <app-rich-text-editor formControlName="description" class="mt-1 block" />
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700">Fecha límite</label>
-                    <input type="datetime-local" formControlName="dueDate" class="input-field mt-1" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700">Tipo</label>
-                    <select formControlName="type" class="input-field mt-1">
-                      @for (type of activityTypes; track type) {
-                        <option [value]="type">{{ type }}</option>
-                      }
-                    </select>
-                  </div>
-                </div>
-                @if (activityForm.controls.type.value === 'ConArchivo') {
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700">Máximo de archivos (entrega)</label>
-                    <input type="number" min="1" formControlName="maxFiles" class="input-field mt-1 w-32" />
-                  </div>
-                }
+                  <div class="flex items-center justify-end gap-3">
+                    <button
+                      type="button"
+                      (click)="toggleCohortDropdown()"
+                      class="flex items-center gap-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 transition-colors hover:border-brand-300 hover:bg-brand-50 dark:hover:bg-gray-800"
+                    >
+                      {{ activityForm.controls.kind.value === 'Grupal' ? 'Grupos' : 'Fichas' }}: {{ cohortDropdownSummary() }}
+                      <svg class="h-3.5 w-3.5 transition-transform" [class.rotate-180]="isCohortDropdownOpen()" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                      </svg>
+                    </button>
 
-                <div>
-                  <label class="block text-xs font-medium text-gray-700">Alcance</label>
-                  <p class="mt-1 text-xs text-gray-400">
-                    Sin marcar ninguna ficha, la actividad es global.
-                  </p>
-                  @if (cohorts().length > 0) {
-                    <div class="mt-2 flex flex-wrap gap-3">
-                      @for (cohort of cohorts(); track cohort.id) {
-                        <label class="flex items-center gap-1.5 text-xs text-gray-700">
-                          <input
-                            type="checkbox"
-                            [checked]="activityCohortIds().has(cohort.id)"
-                            (change)="toggleActivityCohort(cohort.id)"
-                            class="rounded border-gray-300 text-brand-600 focus:ring-brand-500"
-                          />
-                          {{ cohort.name }}
-                        </label>
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-xs font-medium text-gray-700 dark:text-gray-300">Ocultar</span>
+                      <button
+                        type="button"
+                        role="switch"
+                        [attr.aria-checked]="activityForm.controls.isHidden.value"
+                        (click)="toggleActivityHidden()"
+                        class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors"
+                        [class.bg-brand-600]="activityForm.controls.isHidden.value"
+                        [class.bg-gray-300]="!activityForm.controls.isHidden.value"
+                        [class.dark:bg-gray-600]="!activityForm.controls.isHidden.value"
+                      >
+                        <span class="sr-only">Ocultar actividad (solo vos la ves; no notifica a nadie hasta que la publiques)</span>
+                        <span
+                          class="inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform"
+                          [class.translate-x-4]="activityForm.controls.isHidden.value"
+                          [class.translate-x-1]="!activityForm.controls.isHidden.value"
+                        ></span>
+                      </button>
+                    </div>
+                  </div>
+
+                  @if (isCohortDropdownOpen()) {
+                    <div class="animate-fade-in-down mt-2 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                      <p class="border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-400">
+                        @if (activityForm.controls.kind.value === 'Grupal') {
+                          Cada ficha marcada es un grupo distinto: sus integrantes entregan en conjunto. Elegí al menos una.
+                        } @else {
+                          Sin marcar ninguna ficha, la actividad es global (visible para todo el curso).
+                        }
+                      </p>
+                      @if (cohorts().length > 0) {
+                        <table class="w-full text-sm">
+                          <thead>
+                            <tr class="bg-gray-100 dark:bg-gray-800 text-xs text-gray-500 dark:text-gray-400">
+                              <th class="px-3 py-1.5 text-left font-medium">Ficha</th>
+                              <th class="px-3 py-1.5 text-right font-medium">Permitir</th>
+                            </tr>
+                          </thead>
+                          <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-gray-900">
+                            @for (cohort of cohorts(); track cohort.id) {
+                              <tr>
+                                <td class="px-3 py-2 text-gray-700 dark:text-gray-300">{{ cohort.name }}</td>
+                                <td class="px-3 py-2 text-right">
+                                  <input
+                                    type="checkbox"
+                                    [checked]="activityCohortIds().has(cohort.id)"
+                                    (change)="toggleActivityCohort(cohort.id)"
+                                    class="rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                                  />
+                                </td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      } @else {
+                        <p class="bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-400">Este curso todavía no tiene fichas creadas.</p>
                       }
                     </div>
                   }
                 </div>
 
                 <div>
-                  <label class="block text-xs font-medium text-gray-700">Material de apoyo (máx. 10MB por archivo)</label>
+                  <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Título</label>
+                  <input type="text" formControlName="title" class="input-field mt-1" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Descripción</label>
+                  <app-rich-text-editor formControlName="description" class="mt-1 block" />
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Fecha límite</label>
+                    <input type="datetime-local" formControlName="dueDate" class="input-field mt-1" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Apertura (opcional, solo informativa)</label>
+                    <input type="datetime-local" formControlName="openDate" class="input-field mt-1" />
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Tipo de entrega</label>
+                    <select formControlName="type" class="input-field mt-1">
+                      @for (type of activityTypes; track type) {
+                        <option [value]="type">{{ type }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Modalidad</label>
+                    <select formControlName="kind" class="input-field mt-1">
+                      @for (kind of activityKinds; track kind) {
+                        <option [value]="kind">{{ activityKindIcons[kind] }} {{ activityKindLabels[kind] }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                @if (activityForm.controls.kind.value === 'Grupal') {
+                  <div>
+                    <button
+                      type="button"
+                      (click)="toggleGroupPreview()"
+                      class="flex items-center gap-1.5 text-xs font-medium text-brand-600 transition-colors hover:text-brand-700"
+                    >
+                      Vista previa de grupos
+                      <svg class="h-3.5 w-3.5 transition-transform" [class.rotate-180]="isGroupPreviewOpen()" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                      </svg>
+                    </button>
+
+                    @if (isGroupPreviewOpen()) {
+                      <div class="animate-fade-in-down mt-2 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                        <div class="flex gap-1 border-b border-gray-100 dark:border-gray-800 p-1.5">
+                          <button
+                            type="button"
+                            (click)="groupPreviewMode.set('porGrupo')"
+                            class="rounded-md px-2 py-1 text-xs font-medium transition-colors"
+                            [class.bg-brand-50]="groupPreviewMode() === 'porGrupo'"
+                            [class.text-brand-700]="groupPreviewMode() === 'porGrupo'"
+                            [class.text-gray-500]="groupPreviewMode() !== 'porGrupo'"
+                          >
+                            Por grupo
+                          </button>
+                          <button
+                            type="button"
+                            (click)="groupPreviewMode.set('porEstudiante')"
+                            class="rounded-md px-2 py-1 text-xs font-medium transition-colors"
+                            [class.bg-brand-50]="groupPreviewMode() === 'porEstudiante'"
+                            [class.text-brand-700]="groupPreviewMode() === 'porEstudiante'"
+                            [class.text-gray-500]="groupPreviewMode() !== 'porEstudiante'"
+                          >
+                            Por estudiante
+                          </button>
+                        </div>
+
+                        <div class="max-h-60 overflow-y-auto p-3 text-xs">
+                          @if (activityCohortIds().size === 0) {
+                            <p class="text-gray-400">Marcá alguna ficha arriba para ver quiénes forman cada grupo.</p>
+                          } @else if (groupPreviewMode() === 'porGrupo') {
+                            <div class="space-y-3">
+                              @for (group of groupPreviewByCohort(); track group.cohort.id) {
+                                <div>
+                                  <p class="font-medium text-gray-900 dark:text-gray-100">{{ group.cohort.name }}</p>
+                                  <ul class="mt-1 space-y-0.5 text-gray-600 dark:text-gray-400">
+                                    @for (student of group.students; track student.id) {
+                                      <li>{{ student.name ?? student.email }}</li>
+                                    } @empty {
+                                      <li class="text-gray-400">Sin estudiantes en esta ficha todavía.</li>
+                                    }
+                                  </ul>
+                                </div>
+                              }
+                              @if (groupPreviewUnassignedStudents().length > 0) {
+                                <div>
+                                  <p class="font-medium text-amber-600">Sin grupo asignado</p>
+                                  <ul class="mt-1 space-y-0.5 text-gray-600 dark:text-gray-400">
+                                    @for (student of groupPreviewUnassignedStudents(); track student.id) {
+                                      <li>{{ student.name ?? student.email }}</li>
+                                    }
+                                  </ul>
+                                </div>
+                              }
+                            </div>
+                          } @else {
+                            <ul class="space-y-1">
+                              @for (entry of groupPreviewByStudent(); track entry.student.id) {
+                                <li class="flex items-center justify-between gap-2 text-gray-700 dark:text-gray-300">
+                                  <span>{{ entry.student.name ?? entry.student.email }}</span>
+                                  <span [class.text-amber-600]="entry.cohortNames.length === 0" class="shrink-0 text-gray-500 dark:text-gray-400">
+                                    {{ entry.cohortNames.length > 0 ? entry.cohortNames.join(', ') : 'Sin grupo' }}
+                                  </span>
+                                </li>
+                              }
+                            </ul>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (activityForm.controls.type.value === 'ConArchivo') {
+                  <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Máximo de archivos (entrega)</label>
+                    <input type="number" min="1" formControlName="maxFiles" class="input-field mt-1 w-32" />
+                  </div>
+                }
+
+                <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300">
+                  <input type="checkbox" formControlName="allowsLateSubmission" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
+                  Permitir entrega tardía después de la fecha límite (podés cerrarla manualmente en cualquier momento)
+                </label>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Material de apoyo (máx. 10MB por archivo)</label>
                   <input
                     type="file"
                     multiple
                     (change)="onActivityFilesSelected($event)"
-                    class="mt-1 block w-full text-xs text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-brand-700 hover:file:bg-brand-100"
+                    class="mt-1 block w-full text-xs text-gray-600 dark:text-gray-400 file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-brand-700 hover:file:bg-brand-100"
                   />
                   @if (activityFilesErrorMessage()) {
                     <p class="animate-fade-in-down mt-1 text-xs text-red-600">{{ activityFilesErrorMessage() }}</p>
@@ -226,7 +383,7 @@
                   @if (activityFiles().length > 0) {
                     <ul class="mt-2 space-y-1">
                       @for (file of activityFiles(); track file.name) {
-                        <li class="flex items-center justify-between text-xs text-gray-600">
+                        <li class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
                           <span>📎 {{ file.name }} ({{ (file.size / 1024 / 1024).toFixed(2) }}MB)</span>
                           <button type="button" (click)="removeActivityFile(file.name)" class="text-red-500 hover:underline">
                             Quitar
@@ -237,11 +394,6 @@
                   }
                 </div>
 
-                <label class="flex items-center gap-1.5 text-xs text-gray-700">
-                  <input type="checkbox" formControlName="isHidden" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
-                  Ocultar (solo vos la ves; no notifica a nadie hasta que la publiques)
-                </label>
-
                 @if (activityErrorMessage()) {
                   <p class="animate-fade-in-down text-xs text-red-600">{{ activityErrorMessage() }}</p>
                 }
@@ -249,7 +401,7 @@
                   <button type="submit" class="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0">
                     Crear actividad
                   </button>
-                  <button type="button" (click)="addingActivityForSectionId.set(null)" class="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-100">
+                  <button type="button" (click)="addingActivityForSectionId.set(null)" class="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-500 dark:text-gray-400 transition-colors hover:bg-gray-100">
                     Cancelar
                   </button>
                 </div>
@@ -260,17 +412,21 @@
               @for (activity of activitiesBySection()[section.id] ?? []; track activity.id) {
                 <li class="flex flex-wrap items-center justify-between gap-2 py-3">
                   <button type="button" (click)="openActivityDetail(activity)" class="flex-1 text-left">
-                    <p class="text-sm font-medium text-gray-900 transition-colors hover:text-brand-700">
+                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors hover:text-brand-700">
+                      <span [title]="activityKindLabels[activity.kind]">{{ activityKindIcons[activity.kind] }}</span>
                       {{ activity.title }}
-                      <span class="badge bg-gray-100 font-normal text-gray-500">{{ scopeLabel(activity.cohortIds) }}</span>
+                      <span class="badge bg-gray-100 font-normal text-gray-500 dark:text-gray-400">{{ scopeLabel(activity.cohortIds) }}</span>
                       @if (activity.status === 'Oculto') {
                         <span class="badge bg-amber-50 font-normal text-amber-700">Oculto</span>
+                      }
+                      @if (activity.status !== 'Oculto' && !activity.hasOpened) {
+                        <span class="badge bg-amber-50 font-normal text-amber-700">Aún no visible para estudiantes</span>
                       }
                       @if (activity.files.length > 0) {
                         <span class="ml-1 text-xs font-normal text-gray-400">📎 {{ activity.files.length }}</span>
                       }
                     </p>
-                    <p class="text-xs text-gray-500">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
                       {{ activity.type }} · Vence {{ activity.dueDateUtc | date: 'medium' }}
                       @if (activity.maxFiles) {
                         · máx. {{ activity.maxFiles }} archivo(s) de entrega
@@ -278,14 +434,14 @@
                     </p>
                   </button>
                   <div class="flex gap-2 text-xs">
-                    <a [routerLink]="['/profesor/actividades', activity.id, 'entregas']" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700">
+                    <a [routerLink]="['/profesor/actividades', activity.id, 'entregas']" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 dark:text-gray-400 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700">
                       Ver entregas
                     </a>
                     @if (activity.status !== 'Oculto') {
-                      <button type="button" (click)="notifyNewActivity(activity.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 transition-colors hover:bg-gray-50">
+                      <button type="button" (click)="notifyNewActivity(activity.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 dark:text-gray-400 transition-colors hover:bg-gray-50">
                         Notificar
                       </button>
-                      <button type="button" (click)="sendDueDateReminder(activity.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 transition-colors hover:bg-gray-50">
+                      <button type="button" (click)="sendDueDateReminder(activity.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 dark:text-gray-400 transition-colors hover:bg-gray-50">
                         Recordatorio
                       </button>
                     }
