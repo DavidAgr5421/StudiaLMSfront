@@ -4,8 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "vercel-build": "node scripts/set-prod-env.cjs && ng build",
+    "build": "node scripts/set-prod-env.cjs && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
