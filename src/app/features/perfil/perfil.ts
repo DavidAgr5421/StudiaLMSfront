@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../core/services/user.service';
@@ -14,7 +15,7 @@ const IDENTIFICATION_TYPES: { value: IdentificationType; label: string }[] = [
 
 @Component({
   selector: 'app-perfil',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgTemplateOutlet],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
@@ -59,6 +60,10 @@ export class Perfil {
   });
   protected readonly isSavingPassword = signal(false);
   protected readonly passwordErrorMessage = signal<string | null>(null);
+  protected readonly showEmailCurrentPassword = signal(false);
+  protected readonly showCurrentPassword = signal(false);
+  protected readonly showNewPassword = signal(false);
+  protected readonly showConfirmPassword = signal(false);
 
   protected readonly identificationTypes = IDENTIFICATION_TYPES;
   protected readonly identificationForm = this.fb.nonNullable.group({

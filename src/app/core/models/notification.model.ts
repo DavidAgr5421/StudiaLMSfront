@@ -1,4 +1,11 @@
-export type NotificationType = 'NuevaActividad' | 'RecordatorioFechaLimite' | 'ContenidoAgregado';
+export type NotificationType =
+  | 'NuevaActividad'
+  | 'RecordatorioFechaLimite'
+  | 'ContenidoAgregado'
+  | 'Calificado'
+  | 'SolicitudInscripcion'
+  | 'EntregaActividad'
+  | 'MovidoAFicha';
 
 export interface NotificationResult {
   id: string;

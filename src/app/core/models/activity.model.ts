@@ -1,4 +1,5 @@
 export type ActivityType = 'ConArchivo' | 'SoloTexto';
+export type ActivityStatus = 'Visible' | 'Oculto';
 
 export interface ActivityFileResult {
   fileName: string;
@@ -22,4 +23,6 @@ export interface ActivityResult {
   // Solo lo trae GET /activities/{id} (la página standalone) -- los listados por
   // sección no lo necesitan porque el caller ya conoce el curso por contexto.
   courseId: string | null;
+  // Oculto: solo la ve el profesor dueño del curso, no dispara notificaciones.
+  status: ActivityStatus;
 }

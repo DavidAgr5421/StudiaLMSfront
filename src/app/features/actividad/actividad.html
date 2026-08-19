@@ -86,94 +86,89 @@
               <div class="skeleton h-12 w-full"></div>
             </div>
           } @else if (mySubmission(); as submission) {
-            <div class="animate-fade-in-up">
-              <div class="flex items-center gap-2">
-                <h2 class="text-sm font-medium text-gray-900">Tu entrega</h2>
-                <span
-                  class="badge"
-                  [class]="submission.status === 'ATiempo' ? 'bg-brand-50 text-brand-700' : 'bg-amber-50 text-amber-700'"
-                >
-                  {{ submission.status === 'ATiempo' ? 'A tiempo' : 'Tardía' }}
-                </span>
-              </div>
-              @if (submitSuccess()) {
-                <p class="animate-pop-in mt-2 flex items-center gap-1.5 rounded-lg bg-brand-50 px-3 py-2 text-sm text-brand-700">
-                  <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  ¡Entrega enviada!
-                </p>
+            @if (isEditingSubmission()) {
+              <h2 class="text-sm font-medium text-gray-900">Editar entrega</h2>
+              @if (a.type !== 'SoloTexto') {
+                <p class="mt-1 text-xs text-gray-500">Selecciona los archivos nuevamente para reemplazar la entrega actual.</p>
               }
-              <p class="mt-2 text-xs text-gray-500">Entregado el {{ submission.submittedAtUtc | date: 'medium' }}</p>
+              <ng-container *ngTemplateOutlet="submissionForm" />
 
-              @if (submission.textContent) {
-                @if (a.type === 'SoloTexto') {
-                  <p class="mt-2 whitespace-pre-wrap rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-700">
-                    {{ submission.textContent }}
+              <div class="mt-3 flex items-center gap-2">
+                <button type="button" [disabled]="isSubmitting()" (click)="submit()" class="btn-primary">
+                  @if (isSubmitting()) {
+                    <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                  }
+                  {{ isSubmitting() ? 'Guardando…' : 'Guardar cambios' }}
+                </button>
+                <button type="button" [disabled]="isSubmitting()" (click)="cancelEditSubmission()" class="btn-secondary">
+                  Cancelar
+                </button>
+              </div>
+            } @else {
+              <div class="animate-fade-in-up">
+                <div class="flex items-center gap-2">
+                  <h2 class="text-sm font-medium text-gray-900">Tu entrega</h2>
+                  <span
+                    class="badge"
+                    [class]="submission.status === 'ATiempo' ? 'bg-brand-50 text-brand-700' : 'bg-amber-50 text-amber-700'"
+                  >
+                    {{ submission.status === 'ATiempo' ? 'A tiempo' : 'Tardía' }}
+                  </span>
+                  @if (canEditSubmission()) {
+                    <button
+                      type="button"
+                      (click)="startEditSubmission()"
+                      class="ml-auto text-xs font-medium text-brand-600 transition-colors hover:text-brand-700 hover:underline"
+                    >
+                      Editar
+                    </button>
+                  }
+                </div>
+                @if (submitSuccess()) {
+                  <p class="animate-pop-in mt-2 flex items-center gap-1.5 rounded-lg bg-brand-50 px-3 py-2 text-sm text-brand-700">
+                    <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    ¡Entrega guardada!
                   </p>
-                } @else {
-                  <div class="prose prose-sm mt-2 max-w-none rounded-lg bg-gray-50 px-3 py-2 text-gray-700" [innerHTML]="submission.textContent"></div>
                 }
-              }
-              @if (submission.files.length > 0) {
-                <ul class="mt-2 space-y-1">
-                  @for (file of submission.files; track file.storageKey) {
-                    <li class="text-xs text-gray-600">📎 {{ file.fileName }}</li>
-                  }
-                </ul>
-              }
+                <p class="mt-2 text-xs text-gray-500">Entregado el {{ submission.submittedAtUtc | date: 'medium' }}</p>
 
-              <div class="mt-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2">
-                @if (submission.score !== null) {
-                  <p class="text-sm font-medium text-gray-900">Calificación: {{ submission.score }}/100</p>
-                  @if (submission.feedback) {
-                    <p class="mt-1 text-sm text-gray-600">{{ submission.feedback }}</p>
+                @if (submission.textContent) {
+                  @if (a.type === 'SoloTexto') {
+                    <p class="mt-2 whitespace-pre-wrap rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                      {{ submission.textContent }}
+                    </p>
+                  } @else {
+                    <div class="prose prose-sm mt-2 max-w-none rounded-lg bg-gray-50 px-3 py-2 text-gray-700" [innerHTML]="submission.textContent"></div>
                   }
-                } @else {
-                  <p class="text-sm text-gray-500">Aún no fue calificada.</p>
                 }
+                @if (submission.files.length > 0) {
+                  <ul class="mt-2 space-y-1">
+                    @for (file of submission.files; track file.storageKey) {
+                      <li class="text-xs text-gray-600">📎 {{ file.fileName }}</li>
+                    }
+                  </ul>
+                }
+
+                <div class="mt-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2">
+                  @if (submission.score !== null) {
+                    <p class="text-sm font-medium text-gray-900">Calificación: {{ submission.score }}/5</p>
+                    @if (submission.feedback) {
+                      <p class="mt-1 text-sm text-gray-600">{{ submission.feedback }}</p>
+                    }
+                  } @else {
+                    <p class="text-sm text-gray-500">Aún no fue calificada.</p>
+                  }
+                </div>
               </div>
-            </div>
+            }
           } @else {
             <h2 class="text-sm font-medium text-gray-900">Entregar actividad</h2>
-
-            @if (a.type === 'SoloTexto') {
-              <textarea
-                [ngModel]="submissionText()"
-                (ngModelChange)="submissionText.set($event)"
-                rows="4"
-                placeholder="Escribí tu respuesta…"
-                class="input-field mt-2"
-              ></textarea>
-            } @else {
-              <input
-                type="file"
-                multiple
-                (change)="onSubmissionFilesSelected($event)"
-                class="mt-2 block w-full text-xs text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-brand-700 hover:file:bg-brand-100"
-              />
-              @if (submissionFilesError()) {
-                <p class="animate-fade-in-down mt-1 text-xs text-red-600">{{ submissionFilesError() }}</p>
-              }
-              @if (submissionFiles().length > 0) {
-                <ul class="mt-2 space-y-1">
-                  @for (file of submissionFiles(); track file.name) {
-                    <li class="text-xs text-gray-600">📎 {{ file.name }}</li>
-                  }
-                </ul>
-              }
-
-              <label class="mt-3 block text-xs font-medium text-gray-700">Descripción (opcional)</label>
-              <app-rich-text-editor
-                [ngModel]="submissionDescription()"
-                (ngModelChange)="submissionDescription.set($event)"
-                class="mt-1 block"
-              />
-            }
-
-            @if (submitError()) {
-              <p class="animate-fade-in-down mt-2 text-xs text-red-600">{{ submitError() }}</p>
-            }
+            <ng-container *ngTemplateOutlet="submissionForm" />
 
             <button type="button" [disabled]="isSubmitting()" (click)="submit()" class="btn-primary mt-3">
               @if (isSubmitting()) {
@@ -190,3 +185,41 @@
     </div>
   }
 </div>
+
+<ng-template #submissionForm>
+  @if (activity(); as a) {
+    @if (a.type === 'SoloTexto') {
+      <textarea
+        [ngModel]="submissionText()"
+        (ngModelChange)="submissionText.set($event)"
+        rows="4"
+        placeholder="Escribí tu respuesta…"
+        class="input-field mt-2"
+      ></textarea>
+    } @else {
+      <input
+        type="file"
+        multiple
+        (change)="onSubmissionFilesSelected($event)"
+        class="mt-2 block w-full text-xs text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-brand-700 hover:file:bg-brand-100"
+      />
+      @if (submissionFilesError()) {
+        <p class="animate-fade-in-down mt-1 text-xs text-red-600">{{ submissionFilesError() }}</p>
+      }
+      @if (submissionFiles().length > 0) {
+        <ul class="mt-2 space-y-1">
+          @for (file of submissionFiles(); track file.name) {
+            <li class="text-xs text-gray-600">📎 {{ file.name }}</li>
+          }
+        </ul>
+      }
+
+      <label class="mt-3 block text-xs font-medium text-gray-700">Descripción (opcional)</label>
+      <app-rich-text-editor [ngModel]="submissionDescription()" (ngModelChange)="submissionDescription.set($event)" class="mt-1 block" />
+    }
+
+    @if (submitError()) {
+      <p class="animate-fade-in-down mt-2 text-xs text-red-600">{{ submitError() }}</p>
+    }
+  }
+</ng-template>

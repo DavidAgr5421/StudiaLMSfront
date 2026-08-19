@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ActivityResult, ActivityType } from '../models/activity.model';
+import { ActivityResult, ActivityStatus, ActivityType } from '../models/activity.model';
 import { SubmissionResult } from '../models/submission.model';
 
 export interface CreateActivityParams {
@@ -14,6 +14,7 @@ export interface CreateActivityParams {
   maxFiles: number | null;
   cohortIds: string[];
   files: File[];
+  status?: ActivityStatus;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -35,6 +36,7 @@ export class ActivityService {
     if (params.maxFiles !== null) formData.append('maxFiles', String(params.maxFiles));
     for (const cohortId of params.cohortIds) formData.append('cohortIds', cohortId);
     for (const file of params.files) formData.append('files', file, file.name);
+    if (params.status) formData.append('status', params.status);
 
     return this.http.post<ActivityResult>(this.baseUrl, formData);
   }

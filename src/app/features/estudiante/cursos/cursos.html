@@ -89,24 +89,36 @@
     <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       @for (item of enrolledCourses(); track item.course.id; let i = $index) {
         <li class="animate-fade-in-up" [style.animation-delay.ms]="i * 60">
-          <a [routerLink]="['/estudiante/cursos', item.course.id]" class="card-interactive group block p-5">
-            <div class="flex items-start justify-between gap-2">
-              <h2 class="font-semibold text-gray-900 transition-colors group-hover:text-brand-700">
-                {{ item.course.name }}
-              </h2>
-              <span
-                class="badge"
-                [class]="item.course.status === 'Activo' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500'"
-              >
-                {{ item.course.status }}
-              </span>
+          <a [routerLink]="['/estudiante/cursos', item.course.id]" class="card-interactive group block overflow-hidden">
+            <div
+              class="h-20 w-full"
+              [style.background]="
+                item.course.coverImageFileName ? null : (item.course.color ?? 'linear-gradient(to right, var(--color-brand-500), var(--color-brand-300))')
+              "
+            >
+              @if (item.course.coverImageFileName) {
+                <img [src]="courseService.getCoverImageUrl(item.course.id)" alt="" class="h-full w-full object-cover" />
+              }
             </div>
-            @if (item.course.profesorName) {
-              <p class="mt-2 text-xs text-gray-500">Profesor: {{ item.course.profesorName }}</p>
-            }
-            <p class="mt-3 flex items-center gap-1 text-xs font-medium text-brand-600 opacity-0 transition-opacity group-hover:opacity-100">
-              Entrar al curso →
-            </p>
+            <div class="p-5">
+              <div class="flex items-start justify-between gap-2">
+                <h2 class="font-semibold text-gray-900 transition-colors group-hover:text-brand-700">
+                  {{ item.course.name }}
+                </h2>
+                <span
+                  class="badge"
+                  [class]="item.course.status === 'Activo' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500'"
+                >
+                  {{ item.course.status }}
+                </span>
+              </div>
+              @if (item.course.profesorName) {
+                <p class="mt-2 text-xs text-gray-500">Profesor: {{ item.course.profesorName }}</p>
+              }
+              <p class="mt-3 flex items-center gap-1 text-xs font-medium text-brand-600 opacity-0 transition-opacity group-hover:opacity-100">
+                Entrar al curso →
+              </p>
+            </div>
           </a>
         </li>
       }

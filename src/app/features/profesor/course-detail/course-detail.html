@@ -96,6 +96,11 @@
         }
       </div>
 
+      <label class="flex items-center gap-1.5 text-sm text-gray-700">
+        <input type="checkbox" formControlName="isHidden" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
+        Ocultar (solo vos la ves; no notifica a nadie hasta que la publiques)
+      </label>
+
       @if (sectionErrorMessage()) {
         <p class="animate-fade-in-down text-xs text-red-600">{{ sectionErrorMessage() }}</p>
       }
@@ -114,6 +119,9 @@
           <button type="button" (click)="toggleSection(section.id)" class="flex flex-1 items-center gap-2 text-left">
             <span class="font-medium text-gray-900">{{ section.title }}</span>
             <span class="badge bg-gray-100 text-gray-500">{{ scopeLabel(section.cohortIds) }}</span>
+            @if (section.status === 'Oculto') {
+              <span class="badge bg-amber-50 text-amber-700">Oculto</span>
+            }
           </button>
           <div class="flex items-center gap-3">
             <button
@@ -141,9 +149,11 @@
             }
 
             <div class="mt-3 flex gap-2">
-              <button type="button" (click)="notifyNewSection(section.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50">
-                Notificar nueva sección
-              </button>
+              @if (section.status !== 'Oculto') {
+                <button type="button" (click)="notifyNewSection(section.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50">
+                  Notificar nueva sección
+                </button>
+              }
               <button type="button" (click)="startAddingActivity(section.id)" class="rounded-lg border border-brand-600 px-2.5 py-1 text-xs font-medium text-brand-700 transition-colors hover:bg-brand-50">
                 + Actividad
               </button>
@@ -227,6 +237,11 @@
                   }
                 </div>
 
+                <label class="flex items-center gap-1.5 text-xs text-gray-700">
+                  <input type="checkbox" formControlName="isHidden" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
+                  Ocultar (solo vos la ves; no notifica a nadie hasta que la publiques)
+                </label>
+
                 @if (activityErrorMessage()) {
                   <p class="animate-fade-in-down text-xs text-red-600">{{ activityErrorMessage() }}</p>
                 }
@@ -248,6 +263,9 @@
                     <p class="text-sm font-medium text-gray-900 transition-colors hover:text-brand-700">
                       {{ activity.title }}
                       <span class="badge bg-gray-100 font-normal text-gray-500">{{ scopeLabel(activity.cohortIds) }}</span>
+                      @if (activity.status === 'Oculto') {
+                        <span class="badge bg-amber-50 font-normal text-amber-700">Oculto</span>
+                      }
                       @if (activity.files.length > 0) {
                         <span class="ml-1 text-xs font-normal text-gray-400">📎 {{ activity.files.length }}</span>
                       }
@@ -263,12 +281,14 @@
                     <a [routerLink]="['/profesor/actividades', activity.id, 'entregas']" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700">
                       Ver entregas
                     </a>
-                    <button type="button" (click)="notifyNewActivity(activity.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 transition-colors hover:bg-gray-50">
-                      Notificar
-                    </button>
-                    <button type="button" (click)="sendDueDateReminder(activity.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 transition-colors hover:bg-gray-50">
-                      Recordatorio
-                    </button>
+                    @if (activity.status !== 'Oculto') {
+                      <button type="button" (click)="notifyNewActivity(activity.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 transition-colors hover:bg-gray-50">
+                        Notificar
+                      </button>
+                      <button type="button" (click)="sendDueDateReminder(activity.id)" class="rounded-lg border border-gray-300 px-2.5 py-1 font-medium text-gray-600 transition-colors hover:bg-gray-50">
+                        Recordatorio
+                      </button>
+                    }
                   </div>
                 </li>
               } @empty {

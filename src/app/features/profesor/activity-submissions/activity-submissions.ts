@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ActivityService } from '../../../core/services/activity.service';
 import { SubmissionService } from '../../../core/services/submission.service';
-import { SubmissionResult } from '../../../core/models/submission.model';
+import { SubmissionResult, SubmittedFileResult } from '../../../core/models/submission.model';
 import { StudentInfoModal } from '../../../shared/ui/student-info-modal/student-info-modal';
 
 @Component({
@@ -28,6 +28,7 @@ export class ActivitySubmissions {
   protected readonly gradingId = signal<string | null>(null);
 
   protected readonly selectedStudentId = signal<string | null>(null);
+  protected readonly downloadingKey = signal<string | null>(null);
 
   constructor() {
     this.load();
@@ -53,6 +54,22 @@ export class ActivitySubmissions {
 
   setFeedback(submissionId: string, feedback: string): void {
     this.feedbackDraft.update((current) => ({ ...current, [submissionId]: feedback }));
+  }
+
+  download(submissionId: string, file: SubmittedFileResult): void {
+    this.downloadingKey.set(file.storageKey);
+    this.submissionService.downloadFile(submissionId, file.storageKey).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = file.fileName;
+        link.click();
+        URL.revokeObjectURL(url);
+        this.downloadingKey.set(null);
+      },
+      error: () => this.downloadingKey.set(null),
+    });
   }
 
   viewStudent(studentId: string): void {

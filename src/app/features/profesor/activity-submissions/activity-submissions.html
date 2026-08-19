@@ -42,7 +42,7 @@
               </p>
             </div>
             @if (submission.score !== null) {
-              <span class="badge bg-brand-50 px-2.5 py-1 text-brand-700">Nota: {{ submission.score }}/100</span>
+              <span class="badge bg-brand-50 px-2.5 py-1 text-brand-700">Nota: {{ submission.score }}/5</span>
             }
           </div>
 
@@ -59,18 +59,27 @@
           @if (submission.files.length > 0) {
             <ul class="mt-3 space-y-1">
               @for (file of submission.files; track file.storageKey) {
-                <li class="text-xs text-gray-500">📎 {{ file.fileName }} ({{ file.sizeBytes }} bytes)</li>
+                <li>
+                  <button
+                    type="button"
+                    [disabled]="downloadingKey() === file.storageKey"
+                    (click)="download(submission.id, file)"
+                    class="inline-flex items-center gap-1 text-xs text-brand-600 transition-colors hover:text-brand-700 hover:underline disabled:opacity-60"
+                  >
+                    📎 {{ file.fileName }} ({{ file.sizeBytes }} bytes)
+                  </button>
+                </li>
               }
             </ul>
           }
 
           <div class="mt-4 flex flex-wrap items-end gap-2 border-t border-gray-100 pt-4">
             <div>
-              <label class="block text-xs font-medium text-gray-700">Nota (0-100)</label>
+              <label class="block text-xs font-medium text-gray-700">Nota (0-5)</label>
               <input
                 type="number"
                 min="0"
-                max="100"
+                max="5"
                 [ngModel]="scoreDraft()[submission.id] ?? submission.score ?? 0"
                 (ngModelChange)="setScore(submission.id, $event)"
                 class="input-field mt-1 w-24 py-1.5"

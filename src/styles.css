@@ -1,7 +1,13 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* Paleta de Studia: púrpura vívido (identidad de app de estudio) + blancos/grises neutros. */
+/* Habilita el modo oscuro por clase (.dark en <html>) en vez del default de Tailwind
+   v4 que solo mira prefers-color-scheme -- así el toggle manual puede mandar. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Paleta de Studia: púrpura vívido (identidad de app de estudio) + blancos/grises neutros.
+   brand-950 es el "morado oscuro" para fondos en modo oscuro (login, superficies) --
+   los demás (500/600) son el "morado claro" que ya usa toda la app. */
 @theme {
   --color-brand-50: #f5f3ff;
   --color-brand-100: #ede9fe;
@@ -13,13 +19,19 @@
   --color-brand-700: #6d28d9;
   --color-brand-800: #5b21b6;
   --color-brand-900: #4c1d95;
+  --color-brand-950: #2e1065;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
-  @apply text-gray-900;
+  @apply text-gray-900 dark:text-gray-100;
   background: linear-gradient(180deg, #faf8ff 0%, #f8f7fc 40%, #f9fafb 100%);
+  background-attachment: fixed;
+}
+
+:root.dark body {
+  background: linear-gradient(180deg, #15111f 0%, #120f1a 40%, #0f0d16 100%);
   background-attachment: fixed;
 }
 
@@ -43,6 +55,15 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-brand-300);
+}
+:root.dark * {
+  scrollbar-color: var(--color-brand-800) transparent;
+}
+:root.dark ::-webkit-scrollbar-thumb {
+  background-color: var(--color-brand-800);
+}
+:root.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-brand-700);
 }
 
 /* Animaciones reutilizables -- entradas suaves para tarjetas, listas y modales. */
@@ -139,6 +160,9 @@ body {
   background-color: var(--color-brand-100);
   border-radius: 0.5rem;
 }
+:root.dark .skeleton {
+  background-color: var(--color-brand-950);
+}
 .skeleton::after {
   content: "";
   position: absolute;
@@ -154,24 +178,24 @@ body {
     @apply inline-flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md hover:shadow-brand-500/25 active:translate-y-0 active:shadow-sm disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0;
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-brand-200 hover:bg-brand-50/60 hover:text-brand-700 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-brand-200 hover:bg-brand-50/60 hover:text-brand-700 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-brand-700 dark:hover:bg-brand-950/40 dark:hover:text-brand-300;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 transition-all duration-150 ease-out hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 transition-all duration-150 ease-out hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-60 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white;
   }
   .btn-danger {
     @apply inline-flex items-center justify-center gap-1.5 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-red-700 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0;
   }
 
   .input-field {
-    @apply block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm transition-all duration-150 placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/15;
+    @apply block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm transition-all duration-150 placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500;
   }
 
   .card {
-    @apply rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200;
+    @apply rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 dark:border-gray-700 dark:bg-gray-900;
   }
   .card-interactive {
-    @apply rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-900/5;
+    @apply rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-900/5 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-brand-800;
   }
 
   .badge {

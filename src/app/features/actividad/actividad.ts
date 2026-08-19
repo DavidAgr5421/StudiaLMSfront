@@ -1,5 +1,5 @@
 import { Component, OnDestroy, inject, signal } from '@angular/core';
-import { DatePipe, Location } from '@angular/common';
+import { DatePipe, Location, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -33,7 +33,7 @@ function previewKind(fileName: string): FilePreviewKind | null {
 
 @Component({
   selector: 'app-actividad',
-  imports: [DatePipe, FormsModule, RichTextEditor],
+  imports: [DatePipe, FormsModule, RichTextEditor, NgTemplateOutlet],
   templateUrl: './actividad.html',
   styleUrl: './actividad.css',
 })
@@ -72,6 +72,15 @@ export class Actividad implements OnDestroy {
   protected readonly isSubmitting = signal(false);
   protected readonly submitError = signal<string | null>(null);
   protected readonly submitSuccess = signal(false);
+
+  protected readonly isEditingSubmission = signal(false);
+
+  protected canEditSubmission(): boolean {
+    const submission = this.mySubmission();
+    const activity = this.activity();
+    if (!submission || !activity) return false;
+    return new Date(activity.dueDateUtc).getTime() > Date.now();
+  }
 
   constructor() {
     this.activityService.getById(this.activityId).subscribe({
@@ -184,27 +193,58 @@ export class Actividad implements OnDestroy {
     this.submissionFiles.set(files);
   }
 
+  startEditSubmission(): void {
+    const submission = this.mySubmission();
+    const activity = this.activity();
+    if (!submission || !activity) return;
+
+    if (activity.type === 'SoloTexto') {
+      this.submissionText.set(submission.textContent ?? '');
+    } else {
+      this.submissionDescription.set(submission.textContent ?? '');
+    }
+    this.submissionFiles.set([]);
+    this.submissionFilesError.set(null);
+    this.submitError.set(null);
+    this.submitSuccess.set(false);
+    this.isEditingSubmission.set(true);
+  }
+
+  cancelEditSubmission(): void {
+    this.isEditingSubmission.set(false);
+  }
+
   submit(): void {
     const activity = this.activity();
     if (!activity) return;
+
+    const editing = this.isEditingSubmission();
+    const submissionId = this.mySubmission()?.id;
 
     this.submitError.set(null);
     this.isSubmitting.set(true);
 
     const request$ =
-      activity.type === 'SoloTexto'
-        ? this.submissionService.submitText(activity.id, this.submissionText())
-        : this.submissionService.submitFiles(activity.id, this.submissionFiles(), this.submissionDescription());
+      editing && submissionId
+        ? activity.type === 'SoloTexto'
+          ? this.submissionService.editText(submissionId, this.submissionText())
+          : this.submissionService.editFiles(submissionId, this.submissionFiles(), this.submissionDescription())
+        : activity.type === 'SoloTexto'
+          ? this.submissionService.submitText(activity.id, this.submissionText())
+          : this.submissionService.submitFiles(activity.id, this.submissionFiles(), this.submissionDescription());
 
     request$.subscribe({
       next: (submission) => {
         this.isSubmitting.set(false);
         this.submitSuccess.set(true);
         this.mySubmission.set(submission);
+        this.isEditingSubmission.set(false);
       },
       error: () => {
         this.isSubmitting.set(false);
-        this.submitError.set('No se pudo entregar la actividad. Puede que ya la hayas entregado antes.');
+        this.submitError.set(
+          editing ? 'No se pudo editar la entrega.' : 'No se pudo entregar la actividad. Puede que ya la hayas entregado antes.',
+        );
       },
     });
   }

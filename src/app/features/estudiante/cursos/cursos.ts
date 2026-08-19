@@ -21,7 +21,7 @@ export interface EnrolledCourse {
 })
 export class EstudianteCursos {
   private readonly enrollmentService = inject(EnrollmentService);
-  private readonly courseService = inject(CourseService);
+  protected readonly courseService = inject(CourseService);
 
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);

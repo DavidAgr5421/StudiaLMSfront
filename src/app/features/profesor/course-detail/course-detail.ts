@@ -65,6 +65,7 @@ export class CourseDetail {
   protected readonly sectionForm = this.fb.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(150)]],
     descriptionHtml: [''],
+    isHidden: [false],
   });
 
   protected readonly activityForm = this.fb.nonNullable.group({
@@ -73,6 +74,7 @@ export class CourseDetail {
     dueDate: ['', Validators.required],
     type: ['SoloTexto' as ActivityType, Validators.required],
     maxFiles: [1],
+    isHidden: [false],
   });
 
   constructor() {
@@ -122,13 +124,13 @@ export class CourseDetail {
     }
 
     this.sectionErrorMessage.set(null);
-    const { title, descriptionHtml } = this.sectionForm.getRawValue();
+    const { title, descriptionHtml, isHidden } = this.sectionForm.getRawValue();
     const cohortIds = [...this.sectionCohortIds()];
 
-    this.sectionService.create(this.courseId, title, descriptionHtml, cohortIds).subscribe({
+    this.sectionService.create(this.courseId, title, descriptionHtml, cohortIds, isHidden ? 'Oculto' : 'Visible').subscribe({
       next: (section) => {
         this.sections.update((current) => [...current, section]);
-        this.sectionForm.reset({ title: '', descriptionHtml: '' });
+        this.sectionForm.reset({ title: '', descriptionHtml: '', isHidden: false });
         this.sectionCohortIds.set(new Set());
         this.isAddingSection.set(false);
       },
@@ -139,7 +141,7 @@ export class CourseDetail {
   startAddingActivity(sectionId: string): void {
     this.activityErrorMessage.set(null);
     this.activityFilesErrorMessage.set(null);
-    this.activityForm.reset({ title: '', description: '', dueDate: '', type: 'SoloTexto', maxFiles: 1 });
+    this.activityForm.reset({ title: '', description: '', dueDate: '', type: 'SoloTexto', maxFiles: 1, isHidden: false });
     this.activityCohortIds.set(new Set());
     this.activityFiles.set([]);
     this.addingActivityForSectionId.set(sectionId);
@@ -173,7 +175,7 @@ export class CourseDetail {
     }
 
     this.activityErrorMessage.set(null);
-    const { title, description, dueDate, type, maxFiles } = this.activityForm.getRawValue();
+    const { title, description, dueDate, type, maxFiles, isHidden } = this.activityForm.getRawValue();
     const dueDateUtc = new Date(dueDate).toISOString();
 
     this.activityService
@@ -186,6 +188,7 @@ export class CourseDetail {
         maxFiles: type === 'ConArchivo' ? maxFiles : null,
         cohortIds: [...this.activityCohortIds()],
         files: this.activityFiles(),
+        status: isHidden ? 'Oculto' : 'Visible',
       })
       .subscribe({
         next: (activity) => {

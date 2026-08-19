@@ -38,23 +38,33 @@
     <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       @for (course of courses(); track course.id; let i = $index) {
         <li class="animate-fade-in-up group relative" [style.animation-delay.ms]="i * 50">
-          <a [routerLink]="['/profesor/cursos', course.id]" class="card-interactive block p-5">
-            <div class="flex items-start justify-between gap-2">
-              <h2 class="truncate pr-6 font-semibold text-gray-900 transition-colors group-hover:text-brand-700">
-                {{ course.name }}
-              </h2>
-              <span
-                class="badge"
-                [class]="course.status === 'Activo' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500'"
-              >
-                {{ course.status }}
-              </span>
+          <a [routerLink]="['/profesor/cursos', course.id]" class="card-interactive block overflow-hidden">
+            <div
+              class="h-20 w-full"
+              [style.background]="course.coverImageFileName ? null : (course.color ?? 'linear-gradient(to right, var(--color-brand-500), var(--color-brand-300))')"
+            >
+              @if (course.coverImageFileName) {
+                <img [src]="courseService.getCoverImageUrl(course.id)" alt="" class="h-full w-full object-cover" />
+              }
             </div>
-            <p class="mt-2 text-xs text-gray-500">Inscripción: {{ course.enrollmentMode }}</p>
-            <p class="mt-1 text-xs text-gray-400">Código: {{ course.invitationCode }}</p>
-            <p class="mt-3 flex items-center gap-1 text-xs font-medium text-brand-600 opacity-0 transition-opacity group-hover:opacity-100">
-              Administrar curso →
-            </p>
+            <div class="p-5">
+              <div class="flex items-start justify-between gap-2">
+                <h2 class="truncate pr-6 font-semibold text-gray-900 transition-colors group-hover:text-brand-700">
+                  {{ course.name }}
+                </h2>
+                <span
+                  class="badge"
+                  [class]="course.status === 'Activo' ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-500'"
+                >
+                  {{ course.status }}
+                </span>
+              </div>
+              <p class="mt-2 text-xs text-gray-500">Inscripción: {{ course.enrollmentMode }}</p>
+              <p class="mt-1 text-xs text-gray-400">Código: {{ course.invitationCode }}</p>
+              <p class="mt-3 flex items-center gap-1 text-xs font-medium text-brand-600 opacity-0 transition-opacity group-hover:opacity-100">
+                Administrar curso →
+              </p>
+            </div>
           </a>
           <button
             type="button"

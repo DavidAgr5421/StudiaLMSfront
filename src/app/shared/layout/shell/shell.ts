@@ -3,19 +3,22 @@ import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
 import { CurrentUserService } from '../../../core/services/current-user.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { Sidebar } from '../sidebar/sidebar';
 import { CourseSearch } from '../course-search/course-search';
+import { NotificationBell } from '../notification-bell/notification-bell';
 import { ConfirmDialog } from '../../ui/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, RouterLink, Sidebar, CourseSearch, ConfirmDialog],
+  imports: [RouterOutlet, RouterLink, Sidebar, CourseSearch, NotificationBell, ConfirmDialog],
   templateUrl: './shell.html',
   styleUrl: './shell.css',
 })
 export class Shell {
   protected readonly auth = inject(AuthService);
   protected readonly currentUser = inject(CurrentUserService);
+  protected readonly theme = inject(ThemeService);
   private readonly router = inject(Router);
 
   constructor() {

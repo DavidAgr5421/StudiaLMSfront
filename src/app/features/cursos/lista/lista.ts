@@ -16,7 +16,7 @@ import { CourseResult } from '../../../core/models/course.model';
   styleUrl: './lista.css',
 })
 export class CursosPublicos {
-  private readonly courseService = inject(CourseService);
+  protected readonly courseService = inject(CourseService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly query = signal('');

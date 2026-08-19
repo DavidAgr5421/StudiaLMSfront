@@ -1,4 +1,4 @@
-<aside class="flex h-full w-64 shrink-0 flex-col border-r border-gray-200 bg-white">
+<aside class="flex h-full w-64 shrink-0 flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
   <div class="flex-1 overflow-y-auto px-2 py-3">
     @if (isLoading()) {
       <div class="space-y-2 px-2 py-2">
@@ -8,9 +8,9 @@
         <div class="skeleton h-8 w-5/6"></div>
       </div>
     } @else if (isEstudiante()) {
-      <p class="px-2 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-gray-400">Mis cursos</p>
+      <p class="px-2 pb-1 pt-1 text-sm font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Mis cursos</p>
       @if (approvedCourses().length === 0) {
-        <p class="px-2 py-1 text-xs text-gray-400">Sin cursos todavía.</p>
+        <p class="px-2 py-1 text-sm text-gray-400">Sin cursos todavía.</p>
       }
       <ul class="space-y-0.5">
         @for (item of approvedCourses(); track item.course.id) {
@@ -18,7 +18,7 @@
             <button
               type="button"
               (click)="toggleSectionsBranch('c:' + item.course.id, item.course.id)"
-              class="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm font-medium text-gray-700 transition-all duration-150 hover:translate-x-0.5 hover:bg-brand-50/70 hover:text-brand-700"
+              class="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-base font-medium text-gray-700 transition-all duration-150 hover:translate-x-0.5 hover:bg-brand-50/70 hover:text-brand-700 dark:text-gray-200 dark:hover:bg-brand-950/40"
               [class.text-brand-700]="isExpanded('c:' + item.course.id)"
               [class.bg-brand-50]="isExpanded('c:' + item.course.id)"
             >
@@ -54,7 +54,7 @@
       </ul>
 
       @if (pendingCourses().length > 0) {
-        <p class="px-2 pb-1 pt-4 text-xs font-semibold uppercase tracking-wide text-gray-400">En aprobación</p>
+        <p class="px-2 pb-1 pt-4 text-sm font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">En aprobación</p>
         <ul class="space-y-0.5">
           @for (item of pendingCourses(); track item.course.id) {
             <li class="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm text-gray-400">
@@ -65,9 +65,9 @@
         </ul>
       }
     } @else if (isProfesor()) {
-      <p class="px-2 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-gray-400">Mis cursos</p>
+      <p class="px-2 pb-1 pt-1 text-sm font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Mis cursos</p>
       @if (profesorCourses().length === 0) {
-        <p class="px-2 py-1 text-xs text-gray-400">Todavía no creaste cursos.</p>
+        <p class="px-2 py-1 text-sm text-gray-400">Todavía no creaste cursos.</p>
       }
       <ul class="space-y-0.5">
         @for (course of profesorCourses(); track course.id) {
@@ -75,7 +75,7 @@
             <button
               type="button"
               (click)="toggle('c:' + course.id)"
-              class="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm font-medium text-gray-700 transition-all duration-150 hover:translate-x-0.5 hover:bg-brand-50/70 hover:text-brand-700"
+              class="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-base font-medium text-gray-700 transition-all duration-150 hover:translate-x-0.5 hover:bg-brand-50/70 hover:text-brand-700 dark:text-gray-200 dark:hover:bg-brand-950/40"
               [class.text-brand-700]="isExpanded('c:' + course.id)"
               [class.bg-brand-50]="isExpanded('c:' + course.id)"
             >
@@ -102,14 +102,14 @@
                 <a
                   [routerLink]="['/profesor/cursos', course.id, 'inscripciones']"
                   routerLinkActive="bg-brand-50 text-brand-700"
-                  class="block rounded-md px-2 py-1 text-xs text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700"
+                  class="block rounded-md px-2 py-1 text-sm text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700 dark:text-gray-400 dark:hover:bg-gray-800"
                 >
                   Inscripciones
                 </a>
                 <a
                   [routerLink]="['/profesor/cursos', course.id, 'fichas']"
                   routerLinkActive="bg-brand-50 text-brand-700"
-                  class="block rounded-md px-2 py-1 text-xs text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700"
+                  class="block rounded-md px-2 py-1 text-sm text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700 dark:text-gray-400 dark:hover:bg-gray-800"
                 >
                   Fichas
                 </a>
@@ -118,7 +118,7 @@
                   <button
                     type="button"
                     (click)="toggleSectionsBranch('c:' + course.id + ':secciones', course.id)"
-                    class="flex w-full items-center justify-between rounded-md px-2 py-1 text-left text-xs text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700"
+                    class="flex w-full items-center justify-between rounded-md px-2 py-1 text-left text-sm text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700 dark:text-gray-400 dark:hover:bg-gray-800"
                   >
                     <span>Secciones</span>
                     <svg
@@ -148,7 +148,7 @@
                   <button
                     type="button"
                     (click)="toggleSectionsBranch('c:' + course.id + ':calificaciones', course.id)"
-                    class="flex w-full items-center justify-between rounded-md px-2 py-1 text-left text-xs text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700"
+                    class="flex w-full items-center justify-between rounded-md px-2 py-1 text-left text-sm text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700 dark:text-gray-400 dark:hover:bg-gray-800"
                   >
                     <span>Calificaciones</span>
                     <svg
@@ -185,11 +185,11 @@
     }
   </div>
 
-  <div class="border-t border-gray-100 p-2">
+  <div class="border-t border-gray-100 p-2 dark:border-gray-800">
     <a
       routerLink="/perfil"
       routerLinkActive="bg-brand-50 text-brand-700"
-      class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700"
+      class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700 dark:text-gray-400 dark:hover:bg-gray-800"
     >
       <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
@@ -202,7 +202,7 @@
 <ng-template #sectionsTree let-courseId="courseId" let-keyPrefix="keyPrefix" let-mode="mode">
   @if (sectionsByCourse()[courseId]; as sections) {
     @if (sections.length === 0) {
-      <p class="px-2 py-1 text-xs text-gray-400">Sin secciones.</p>
+      <p class="px-2 py-1 text-sm text-gray-400">Sin secciones.</p>
     } @else {
       <ul class="space-y-0.5">
         @for (section of sections; track section.id) {
@@ -210,7 +210,7 @@
             <button
               type="button"
               (click)="toggleSectionNode(keyPrefix + ':s:' + section.id, section.id)"
-              class="flex w-full items-center justify-between rounded-md px-2 py-1 text-left text-xs text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700"
+              class="flex w-full items-center justify-between rounded-md px-2 py-1 text-left text-sm text-gray-600 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700 dark:text-gray-400 dark:hover:bg-gray-800"
             >
               <span class="truncate">{{ section.title }}</span>
               <svg
@@ -228,7 +228,7 @@
               <div class="animate-fade-in-up ml-3 border-l border-gray-100 pl-2">
                 @if (activitiesBySection()[section.id]; as activities) {
                   @if (activities.length === 0) {
-                    <p class="px-2 py-1 text-[11px] text-gray-400">Sin actividades.</p>
+                    <p class="px-2 py-1 text-xs text-gray-400">Sin actividades.</p>
                   } @else {
                     <ul class="space-y-0.5">
                       @for (activity of activities; track activity.id) {
@@ -236,7 +236,7 @@
                           <button
                             type="button"
                             (click)="onActivityClick(activity, mode)"
-                            class="block w-full truncate rounded-md px-2 py-1 text-left text-[11px] text-gray-500 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700"
+                            class="block w-full truncate rounded-md px-2 py-1 text-left text-xs text-gray-500 transition-all duration-150 hover:translate-x-0.5 hover:bg-gray-50 hover:text-brand-700"
                           >
                             {{ activity.title }}
                           </button>

@@ -17,6 +17,7 @@ export class Register {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly isSubmitting = signal(false);
   protected readonly currentYear = new Date().getFullYear();
+  protected readonly showPassword = signal(false);
 
   protected readonly form = this.fb.nonNullable.group({
     name: [''],

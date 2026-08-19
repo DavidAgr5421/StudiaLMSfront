@@ -11,7 +11,7 @@ import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog'
   styleUrl: './dashboard.css',
 })
 export class Dashboard {
-  private readonly courseService = inject(CourseService);
+  protected readonly courseService = inject(CourseService);
 
   protected readonly courses = signal<CourseResult[]>([]);
   protected readonly isLoading = signal(true);
